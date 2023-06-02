@@ -96,6 +96,10 @@
    $ ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0 -v6
    ```
 
+- **odometryをpublish**: pub_odomノードとrviz上可視化
+   ```
+   $  ros2 launch megarover3_bringup robot.launch.py
+   ```
 
 - **キーボードで操作**: キーボードを使用してロボットを操作するためのノードを起動。
 
