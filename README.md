@@ -44,7 +44,7 @@
    ```bash
    $ mkdir -p ~/ros2_ws/src
    $ cd ~/ros2_ws/src
-   $ git clone https://github.com/vstoneofficial/megarover3_ros2.git　--recursive-submodules
+   $ git clone https://github.com/vstoneofficial/megarover3_ros2.git　--recurse-submodules
    $ git clone https://github.com/vstoneofficial/vs_rover_options_description.git  # 「任意」オプションを表示するため
    $ rosdep install -r --from-paths . --ignore-src --rosdistro $ROS_DISTRO -y
    ```
