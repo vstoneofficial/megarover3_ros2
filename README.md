@@ -88,7 +88,7 @@
 
 - **URDFモデルの表示**: 以下のコマンドを実行して、メカナムローバーのURDFモデルを表示します。
    ```
-   $ ros2 launch megarover_description display.launch.py
+   $ ros2 launch megarover_description mega3_view.launch.py
    ```
 
 - **メカナムローバー（実機）との通信**: ROS 2とMicro-ROSを統合するためのエージェントノードを起動。
