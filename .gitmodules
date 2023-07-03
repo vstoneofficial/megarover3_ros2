@@ -1,0 +1,4 @@
+[submodule "megarover_description"]
+	path = megarover_description
+	url = https://github.com/vstoneofficial/megarover_description.git
+	branch = humble
