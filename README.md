@@ -44,7 +44,7 @@
    ```bash
    $ mkdir -p ~/ros2_ws/src
    $ cd ~/ros2_ws/src
-   $ git clone https://github.com/vstoneofficial/megarover3_ros2.git　--recurse-submodules
+   $ git clone https://github.com/vstoneofficial/megarover3_ros2.git --recurse-submodules
    $ git clone https://github.com/vstoneofficial/vs_rover_options_description.git  # 「任意」オプションを表示するため
    $ rosdep install -r --from-paths . --ignore-src --rosdistro $ROS_DISTRO -y
    ```
@@ -93,7 +93,7 @@
 
 - **メカナムローバー（実機）との通信**: ROS 2とMicro-ROSを統合するためのエージェントノードを起動。
    ```
-   $ ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0 -v6
+   $ ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0 -v4
    ```
 
 - **odometryをpublish**: pub_odomノードとrviz上可視化
