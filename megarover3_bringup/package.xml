@@ -2,11 +2,12 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>megarover3_bringup</name>
-  <version>0.0.0</version>
-  <description>Launch files and scripts needed to bring Megarover Ver.3.0 into a running state.</description>
+  <version>1.0.0</version>
+  <description>Launch files and scripts needed to bring Megarover Ver.3.0 into a running state.</description>]
+  <license>Apache License 2.0</license>
+
   <author email="jie@vstone.co.jp">Jie</author>
   <maintainer email="infodesk@vstone.co.jp">Vstone</maintainer>
-  <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>rclcpp</depend>
