@@ -29,9 +29,9 @@ def generate_launch_description():
     launch_ydlidar = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 PathJoinSubstitution([
-                    FindPackageShare('ydlidar_ros2_driver'),
+                    FindPackageShare('megarover3_bringup'),
                     'launch',
-                    'ydlidar_launch.py'
+                    'ydlidar_tg30_launch.py'
                 ])
             ]),
         )
