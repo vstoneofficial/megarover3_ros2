@@ -189,7 +189,7 @@ pub_odomノードとrviz上可視化
       ros2 launch megarover3_navigation gmapping.launch.py
       ```
       付属のVS-C3無線コントローラもしくはROS 2のteleopで動かして、mappingする。
-   
+
    - メガローバーVer.3.0用のSLAM gmappingのパラメータは[`slam_gmapping.cpp`](https://github.com/Project-MANAS/slam_gmapping/blob/eloquent-devel/slam_gmapping/src/slam_gmapping.cpp)にあります。\
    [ROS 2 workspaceにクローンした場合](../slam_gmapping/slam_gmapping/src/slam_gmapping.cpp)
    - 変更下パラメータは下記のようになります。
@@ -198,6 +198,12 @@ pub_odomノードとrviz上可視化
       maxUrange_ = 29.9;  maxRange_ = 30.0;
       minimum_score_ = 500;
       ```
+
+### 作成した地図の保存方法
+下記のコマンドで地図を`megarover3_ros2/megarover3_navigation/maps/`フォルダ内に保存する。
+   ```
+   ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/megarover3_ros2/megarover3_navigation/maps/YOUR_MAP_NAME
+   ```
 
 ### Navigation2を使用したナビゲーション
 1. Nav2パッケージをインストールする。
