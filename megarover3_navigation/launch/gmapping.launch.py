@@ -5,7 +5,7 @@ from launch_ros.actions import Node
 from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
-
+from launch.substitutions import EnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 import os
@@ -24,21 +24,17 @@ def generate_launch_description():
         arguments=['-d', LaunchConfiguration('rvizconfig')],
     )
 
-    launch_gmapping_slam = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare('slam_gmapping'),
-                'launch',
-                'slam_gmapping.launch.py'
-            ])
-        ]),
-        launch_arguments={
-            'use_sim_time':'false'
-        }.items()
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    slam_gmapping_node = Node(
+        package='slam_gmapping',
+        executable='slam_gmapping',
+        name='slam_gmapping',
+        output='screen', 
+        parameters=[{'use_sim_time': use_sim_time}],
     )
 
     return LaunchDescription([
         rviz_arg,
         rviz_node,
-        launch_gmapping_slam,
+        slam_gmapping_node,
     ])
