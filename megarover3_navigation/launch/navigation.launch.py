@@ -34,7 +34,6 @@ def generate_launch_description():
             'maps',
             'tool_new_tg30_2.yaml'))  # change this to your own map for navigation
 
-    # param_file_name = TURTLEBOT3_MODEL + '.yaml'
     param_dir = LaunchConfiguration(
         'params_file',
         default=os.path.join(
