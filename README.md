@@ -212,7 +212,7 @@ pub_odomノードとrviz上可視化
       ros2 launch megarover3_bringup nav_robot.launch.py
       ```
    
-   - `navigation.launch.py` の行37のマップ名を使用したいマップ名に変更する。\
+   - [`navigation.launch.py`](./megarover3_navigation/launch/navigation.launch.py#L35) の行35のマップ名を使用したいマップ名に変更する。\
    新しいターミナルで以下のコマンドを使用してナビゲーションを開始します。
       ```
       ros2 launch megarover3_navigation navigation.launch.py
