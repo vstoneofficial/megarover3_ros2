@@ -112,14 +112,14 @@
   ROS 2とMicro-ROSを統合するためのエージェントノードを起動。
   
 #### 有線シリアル接続の場合
-      ```
-      ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0 -v4
-      ```
+   ```
+   ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0 -v4
+   ```
       
 #### Wi-Fi 接続の場合
-      ```
-      ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
-      ```
+   ```
+   ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
+   ```
 
 ### odometryをpublish
 pub_odomノードとrviz上可視化
