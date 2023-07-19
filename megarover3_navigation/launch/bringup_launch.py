@@ -84,7 +84,7 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value='/home/rover/ros2_ws/src/megarover3_ros2/megarover3_navigation/maps/1001.yaml',
+        default_value='',
         description='Full path to map yaml file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(

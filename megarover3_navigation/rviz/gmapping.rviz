@@ -80,73 +80,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        cam_mount_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        cam_mount_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        camera_accel_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_accel_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_bottom_screw_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_color_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_color_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_depth_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_depth_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_gyro_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_gyro_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_infra1_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_infra1_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_infra2_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_infra2_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         front_lrf_link:
           Alpha: 1
           Show Axes: false
@@ -181,38 +114,6 @@ Visualization Manager:
           Value: true
         base_link:
           Value: false
-        cam_mount_frame:
-          Value: true
-        cam_mount_link:
-          Value: true
-        camera_accel_frame:
-          Value: true
-        camera_accel_optical_frame:
-          Value: true
-        camera_bottom_screw_frame:
-          Value: true
-        camera_color_frame:
-          Value: true
-        camera_color_optical_frame:
-          Value: true
-        camera_depth_frame:
-          Value: true
-        camera_depth_optical_frame:
-          Value: true
-        camera_gyro_frame:
-          Value: true
-        camera_gyro_optical_frame:
-          Value: true
-        camera_infra1_frame:
-          Value: true
-        camera_infra1_optical_frame:
-          Value: true
-        camera_infra2_frame:
-          Value: true
-        camera_infra2_optical_frame:
-          Value: true
-        camera_link:
-          Value: true
         front_lrf_link:
           Value: true
         left_wheel_1:
@@ -235,28 +136,6 @@ Visualization Manager:
               base_link:
                 back_lrf_link:
                   {}
-                cam_mount_frame:
-                  cam_mount_link:
-                    camera_bottom_screw_frame:
-                      camera_link:
-                        camera_accel_frame:
-                          camera_accel_optical_frame:
-                            {}
-                        camera_color_frame:
-                          camera_color_optical_frame:
-                            {}
-                        camera_depth_frame:
-                          camera_depth_optical_frame:
-                            {}
-                        camera_gyro_frame:
-                          camera_gyro_optical_frame:
-                            {}
-                        camera_infra1_frame:
-                          camera_infra1_optical_frame:
-                            {}
-                        camera_infra2_frame:
-                          camera_infra2_optical_frame:
-                            {}
                 front_lrf_link:
                   {}
                 left_wheel_1:
@@ -375,7 +254,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 100.47285461425781
+      Scale: 126.03314971923828
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz_default_plugins)
       X: 0.053292177617549896

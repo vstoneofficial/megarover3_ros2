@@ -1,9 +1,10 @@
 from ament_index_python.packages import get_package_share_path
+from launch.actions import DeclareLaunchArgument
 from launch_ros.substitutions import FindPackageShare
 
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
-from launch.substitutions import PathJoinSubstitution
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 
 
@@ -12,29 +13,16 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
     rviz_config_path = get_package_share_path('megarover3_navigation') / 'rviz/slam.rviz'
 
-    launch_description = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare('megarover_description'),
-                    'launch',
-                    'mega3_view.launch.py'
-                ])
-            ]),
-            launch_arguments={
-                'rvizconfig': str(rviz_config_path),
-                'gui': 'false',
-            }.items()
-        )
+    rviz_arg = DeclareLaunchArgument(name='rvizconfig', default_value=str(rviz_config_path),
+                                    description='Absolute path to rviz config file')
 
-    launch_ydlidar = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare('ydlidar_ros2_driver'),
-                    'launch',
-                    'ydlidar_launch.py'
-                ])
-            ]),
-        )
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', LaunchConfiguration('rvizconfig')],
+    )
 
     launch_slam = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
@@ -44,17 +32,13 @@ def generate_launch_description():
                     'online_async_launch.py'
                 ])
             ]),
+            launch_arguments={
+                'use_sim_time': 'false',
+            }.items()
         )
     
-    pub_odom_node = Node(
-        package='megarover3_bringup',
-        executable='pub_odom',
-        name='pub_odom'
-    )
-
     return LaunchDescription([
-        launch_description,
+        rviz_arg,
+        rviz_node,
         launch_slam,
-        launch_ydlidar,
-        pub_odom_node
     ])

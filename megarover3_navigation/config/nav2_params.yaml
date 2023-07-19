@@ -190,7 +190,8 @@ local_costmap:
       width: 3
       height: 3
       resolution: 0.05
-      footprint: "[ [0.25, 0.16], [0.25, -0.16], [-0.25, -0.16], [-0.25, 0.16] ]"  # Mecanumrover Ver.3.0 with LRF
+      # footprint: "[ [0.25, 0.16], [0.25, -0.16], [-0.25, -0.16], [-0.25, 0.16] ]"  # Mecanumrover Ver.3.0 with LRF
+      footprint: "[ [0.15, 0.18], [0.15, -0.18], [-0.30, -0.18], [-0.30, 0.18] ]"  # Megarover Ver.3.0 with LRF
       # robot_radius: 0.30
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
@@ -262,7 +263,7 @@ map_server:
     use_sim_time: True
     # Overridden in launch by the "map" launch configuration or provided default value.
     # To use in yaml, remove the default "map" value in the tb3_simulation_launch.py file & provide full path to map below.
-    yaml_filename: "/home/rover/ros2_ws/src/mecanumrover3_ros2/mecanumrover3_navigation/maps/map1.yaml"
+    yaml_filename: "~/ros2_ws/src/megarover3_ros2/megarover3_navigation/maps/MAP_NAME.yaml"
     topic_name: "map"
     frame_id: "map"
 
