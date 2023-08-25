@@ -28,7 +28,7 @@ from nav2_common.launch import RewrittenYaml
 
 def generate_launch_description():
     # Get the launch directory
-    bringup_dir = get_package_share_directory('megarover3_navigation')
+    bringup_dir = get_package_share_directory('nav2_bringup')
 
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -56,7 +56,7 @@ def generate_launch_description():
     #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', 'tf'),
                   ('/tf_static', 'tf_static'),
-                  ('/cmd_vel', '/rover_twist')]
+                  ('/cmd_vel', '/rover_twist')]  # add this to control real Megarover Ver.3.0 robot
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
