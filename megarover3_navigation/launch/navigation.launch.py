@@ -26,6 +26,8 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    nav2_launch_file_dir = os.path.join(get_package_share_directory('nav2_bringup'), 'launch')
+
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     map_dir = LaunchConfiguration(
         'map',
@@ -41,7 +43,6 @@ def generate_launch_description():
             'config',
             'nav2_params.yaml'))
 
-    nav2_launch_file_dir = os.path.join(get_package_share_directory('megarover3_navigation'), 'launch')
 
     rviz_config_dir = os.path.join(
         get_package_share_directory('megarover3_navigation'),
@@ -79,4 +80,12 @@ def generate_launch_description():
             arguments=['-d', rviz_config_dir],
             parameters=[{'use_sim_time': use_sim_time}],
             output='screen'),
+
+        # required to control real Megarover Ver.3.0 robot
+        Node(
+            package='topic_tools',
+            executable='relay',
+            name='relay_cmd_vel',
+            arguments=['/cmd_vel', '/rover_twist'],
+            output='screen'), 
     ])
