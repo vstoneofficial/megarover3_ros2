@@ -161,7 +161,7 @@ pub_odomノードとrviz上可視化
 2. SLAM ToolboxでSLAMする。
    - ロボット実機と通信できたら、以下のコマンドでodom publisher、ロボットのurdf表示、LiDAR関連のlaunchファイルを起動します。
       ```
-      ros2 launch megarover3_bringup nav_robot.launch.py
+      ros2 launch megarover3_bringup robot.launch.py rover:=mega3 option:=_lrf
       ```
 
    - 新しいターミナルで以下のコマンドを使用してSLAMを開始します。
@@ -182,7 +182,7 @@ pub_odomノードとrviz上可視化
 2. SLAM gmappingでSLAMする。
    - ロボット実機と通信できたら、以下のコマンドでodom publisher、ロボットのurdf表示、LiDAR関連のlaunchファイルを起動します。
       ```
-      ros2 launch megarover3_bringup nav_robot.launch.py
+      ros2 launch megarover3_bringup robot.launch.py rover:=mega3 option:=_lrf
       ```
 
    - 新しいターミナルで以下のコマンドを使用してSLAMを開始します。
@@ -216,7 +216,7 @@ pub_odomノードとrviz上可視化
 2. Nav2でナビゲーションする。
    - ロボット実機と通信できたら、以下のコマンドでodom publisher、ロボットのurdf表示、LiDAR関連のlaunchファイルを起動します。
       ```
-      ros2 launch megarover3_bringup nav_robot.launch.py
+      ros2 launch megarover3_bringup robot.launch.py rover:=mega3 option:=_lrf
       ```
    
    - [`navigation.launch.py`](./megarover3_navigation/launch/navigation.launch.py#L35) の行35のマップ名を使用したいマップ名に変更する。\
