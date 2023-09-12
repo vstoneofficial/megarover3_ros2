@@ -1,5 +1,18 @@
 # Example usage:
+# Arguments (pass arguments as '<name>:=<value>'):
+#
+#     'rover':
+#         model of rover robot. Valid choices are: 'mega3', 'f120a'
+#         (default: 'mega3')
+#
+#     'option':
+#         options for robot. Valid choices are: '', '_lrf', '_depthcam', '_lrf_depthcam', '_bumper'
+#         (default: '')
+#
+# mega3 + lrf:
 # ros2 launch megarover3_bringup robot.launch.py rover:=mega3 option:=_lrf
+# f120a + lrf + depthcam:
+# ros2 launch megarover3_bringup robot.launch.py rover:=f120a option:=_lrf_depthcam
 
 import os
 import yaml
