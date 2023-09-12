@@ -32,8 +32,8 @@ from launch_ros.parameter_descriptions import ParameterValue
 from launch.conditions import LaunchConfigurationEquals
 
 configurable_parameters = [
-    {'name': 'rover',       'default': 'mega3', 'description': 'model of rover robot', 'choices': "'mega3', 'f120a'"},
-    {'name': 'option',      'default': '',      'description': 'options for robot',    'choices': "'', '_lrf', '_depthcam', '_lrf_depthcam', '_bumper'"},
+    {'name': 'rover',       'default': 'mega3', 'description': 'model of rover', 'choices': "'mega3', 'f120a'"},
+    {'name': 'option',      'default': '',      'description': 'options for rover',    'choices': "'', '_lrf', '_depthcam', '_lrf_depthcam', '_bumper'"},
     #    {'name': 'config_file',      'default': "''",'description': 'yaml config file', 'choices': "''"},
 ]
 
@@ -103,6 +103,22 @@ def launch_setup(context, params, param_name_suffix=''):
             PythonLaunchDescriptionSource(
                 os.path.join(get_package_share_directory('megarover3_bringup'), 'launch', 'ydlidar_tg30_launch.py')),
             condition=LaunchConfigurationEquals('option', '_lrf'),
+        ),
+
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('realsense2_camera'), 'launch', 'rs_launch.py')),
+            condition=LaunchConfigurationEquals('option', '_depthcam'),
+            launch_arguments={
+                'pointcloud.enable': 'true',
+                # 'pointcloud.stream_filter': '2',
+                # 'pointcloud.stream_index_filter': '0',
+                'enable_infra': 'true',
+                'enable_infra1': 'true',
+                'enable_infra2': 'true',
+                'enable_gyro': 'true',
+                'enable_accel': 'true',
+            }.items()
         ),
     ]
 
