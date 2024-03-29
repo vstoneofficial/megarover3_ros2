@@ -33,7 +33,7 @@ install(TARGETS
   pub_odom
   DESTINATION lib/${PROJECT_NAME})
 
-install(DIRECTORY launch rviz
+install(DIRECTORY launch rviz params
   DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
