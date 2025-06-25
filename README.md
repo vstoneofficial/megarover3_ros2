@@ -42,7 +42,6 @@
 ## パッケージ構成
 - `megarover3`: メガローバーVer.3.0のメタパッケージ。
 - `megarover3_bringup`: メガローバーVer.3.0の起動に関連するノードやlaunchファイルを提供します。
-- `megarover3_navigation`: メガローバーVer.3.0のSLAMやnavigationに関連するノードやlaunchファイルを含んでいるパッケージです。
 - `megarover_description`: メガローバーVer.3.0の物理モデルやURDFモデルを含んでいるパッケージです。
 
 ## インストール方法
