@@ -42,6 +42,19 @@
 - Ubuntu Linux - Jammy Jellyfish (22.04)
 - ROS 2 Humble Hawksbill
 
+## ファイルの構成
+   ```
+    ros2_ws/src
+    ├ megarover3_ros2
+    │　├ megarover3
+    │　├ megarover3_bringup
+    │　├ megarover3_navigation
+    │　└ megarover_description
+    ├ slam_gmapping
+    ├ vs_rover_options_description
+    └ ydlidar_ros2_driver
+   ```
+
 ## パッケージ構成
 - `megarover3`: メガローバーVer.3.0のメタパッケージ。
 - `megarover3_bringup`: メガローバーVer.3.0の起動に関連するノードやlaunchファイルを提供します。
@@ -142,6 +155,10 @@ pub_odomノードとrviz上可視化
    ```
 
 ### SLAM ToolboxでSLAM
+  ToolboxはROS2のナビゲーション機（Nav2）と一緒に使える標準的なパッケージです。  
+  現在も活発に更新が続いており、広い範囲での地図作成やループ修正にも対応しています。  
+  実際にロボットを動かす場面ではこのパッケージの利用を推奨します。
+
 1. LRFオプションTG30
    - [ydlidar_ros2_driver](https://github.com/YDLIDAR/ydlidar_ros2_driver.git)を`src`フォルダにクローンして、buildしてください。
       ```
@@ -173,6 +190,11 @@ pub_odomノードとrviz上可視化
    - メガローバーVer.3.0用のSLAM Toolboxのパラメータは`megarover3_navigation`パッケージの[`config`](./megarover3_navigation/config/) フォルダにあります。
 
 ### SLAM gmappingでSLAM
+  gmappingはROS1時代から広く使われてきたSLAMの手法です。  
+  ROS2版も存在しますが公式での開発はすでに終了しており、有志による移植パッケージが提供されています。  
+  そのため十分なサポートは期待できず、実用利用にはあまり適していません。
+  ただし学習や体験を目的に「まずは地図を作る流れを試してみたい」といった場合には活用できます。
+
 1. [SLAM gmapping](https://github.com/Project-MANAS/slam_gmapping)を`src`フォルダにクローンして、buildしてください。
 
    ```
@@ -232,4 +254,4 @@ pub_odomノードとrviz上可視化
 
 ## 貢献
 
-バグの報告や機能の提案など、このパッケージへの貢献は大歓迎です。プルリクエストやイシューを使用して、貢献してください。
+バグの報告や機能の提案など、このパッケージへの貢献は大歓迎です。プルリクエストやイシューを使用して、issueをご利用ください。
