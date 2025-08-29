@@ -162,7 +162,7 @@ pub_odomノードとrviz上可視化
 1. LRFオプションTG30
    - [ydlidar_ros2_driver](https://github.com/YDLIDAR/ydlidar_ros2_driver.git)を`src`フォルダにクローンして、buildしてください。
       ```
-      git clone https://github.com/YDLIDAR/ydlidar_ros2_driver.git
+      git clone -b humble https://github.com/YDLIDAR/ydlidar_ros2_driver.git
       ```
    - LRFに関するパラメータは[TG30.yaml](./megarover3_bringup/params/TG30.yaml)にあります。
 
