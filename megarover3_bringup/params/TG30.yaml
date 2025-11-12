@@ -5,7 +5,7 @@ ydlidar_ros2_driver_node:
   ros__parameters:
     port: /dev/ttyUSB0  # Set the port to the respective port of the LRF sensor.
     frame_id: front_lrf_link
-    ignore_array: ""  # to remove ROS PC region: "140, 180, -180, -140"
+    ignore_array: "100, 180, -180, -100"  # to remove ROS PC region: "140, 180, -180, -140"
     baudrate: 512000
     lidar_type: 0
     device_type: 0

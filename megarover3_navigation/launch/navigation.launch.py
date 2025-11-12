@@ -27,7 +27,7 @@ def generate_launch_description():
         default=os.path.join(
             get_package_share_directory('megarover3_navigation'),
             'maps',
-            'tb_slam1.yaml'))  # change this to your own map for navigation
+            'map.yaml'))  # change this to your own map for navigation
 
     mega3_param_dir = LaunchConfiguration(
         'params_file',

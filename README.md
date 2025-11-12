@@ -26,6 +26,7 @@
     - [SLAM gmappingでSLAM](#slam-gmapping%E3%81%A7slam)
     - [作成した地図の保存方法](#%E4%BD%9C%E6%88%90%E3%81%97%E3%81%9F%E5%9C%B0%E5%9B%B3%E3%81%AE%E4%BF%9D%E5%AD%98%E6%96%B9%E6%B3%95)
     - [Navigation2を使用したナビゲーション](#navigation2%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E3%83%8A%E3%83%93%E3%82%B2%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
+    - [gazeboを使用したシミュレーション](#gazebo%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
 - [ライセンス](#%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9)
 - [貢献](#%E8%B2%A2%E7%8C%AE)
 
@@ -49,6 +50,7 @@
     │　├ megarover3
     │　├ megarover3_bringup
     │　├ megarover3_navigation
+    │　├ megarover3_gazebo
     │　└ megarover_description
     ├ slam_gmapping
     ├ vs_rover_options_description
@@ -60,6 +62,7 @@
 - `megarover3_bringup`: メガローバーVer.3.0の起動に関連するノードやlaunchファイルを提供します。
 - `megarover3_navigation`: メガローバーVer.3.0のSLAMやnavigationに関連するノードやlaunchファイルを含んでいるパッケージです。
 - `megarover_description`: メガローバーVer.3.0の物理モデルやURDFモデルを含んでいるパッケージです。
+- `megarover3_gazebo`: メガローバーVer.3.0のgazebo起動に関連するノードやlaunchファイルを提供します。
 
 ## インストール方法
 
@@ -87,8 +90,9 @@
    ```bash
    $ mkdir -p ~/ros2_ws/src
    $ cd ~/ros2_ws/src
-   $ git clone https://github.com/vstoneofficial/megarover3_ros2.git --recurse-submodules
-   $ git clone -b $ROS_DISTRO https://github.com/vstoneofficial/vs_rover_options_description.git  # オプションを表示するため
+   $ git clone -b humble_gazebo https://github.com/vstoneofficial/megarover3_ros2.git --recurse-submodules
+   $ git clone -b humble_gazebo https://github.com/vstoneofficial/vs_rover_options_description.git  # オプションを表示するため
+   $ sudo xargs -a ~/ros2_ws/src/megarover3_ros2/packages.txt apt install -y
    $ rosdep install -r --from-paths . --ignore-src --rosdistro $ROS_DISTRO -y
    ```
 
@@ -247,6 +251,65 @@ pub_odomノードとrviz上可視化
       ros2 launch megarover3_navigation navigation.launch.py
       ```
    - メガローバーVer.3.0用のNavigation2のパラメータは`megarover3_navigation`パッケージの[`config/nav2_params.yaml`](./megarover3_navigation/config/nav2_params.yaml) フォルダにあります。
+
+#### gazeboでシミュレーションする。
+   - 
+
+
+1. 空のワールドを起動します。
+
+   ```
+   ros2 launch megarover3_gazebo gazebo_bringup.launch.py
+   ```
+
+2. 壁をシミュレータ内にインポートします
+
+   ```
+   ros2 launch megarover3_gazebo spawn_wall.launch.py
+   ```
+
+3. ローバーをマウスで遠隔操作するには、新しいターミナル ウィンドウで以下のコマンドを使用して遠隔操作ノードを起動します。
+
+   ```
+   ros2 launch megarover3_bringup mouse_teleop.launch.py
+   ```
+
+#### gazeboでSLAMする。
+
+1. gazebo serverとSLAMノードを起動します。
+
+   ```
+   ros2 launch megarover3_gazebo gazebo_slam.launch.py 
+   ```
+
+2. ローバーをマウスで遠隔操作するには、新しいターミナル ウィンドウで以下のコマンドを使用して遠隔操作ノードを起動します。
+
+   ```
+   ros2 launch megarover3_bringup mouse_teleop.launch.py
+   ```
+
+3. 下記のコマンドで地図を`megarover3_ros2/megarover3_gazebo/maps/`フォルダ内に保存する。
+
+   ```
+   ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/megarover3_ros2/megarover3_gazebo/maps/YOUR_MAP_NAME
+   ```
+
+#### gazeboでナビゲーションする。
+- [`gazebo_nav.launch.py`](./megarover3_gazebo/launch/gazebo_nav.launch.py#L35) の行35のマップ名を使用したいマップ名に変更する。
+   　 次の行を探し、“ファイル名.yaml”を、先ほど保存，移動させた地図ファイルのファイル名に合わせて設定します。
+
+   ```
+      get_package_share_directory('megarover3_gazebo'),
+      'maps',
+      'YOUR_MAP_NAME.yaml'))
+   ```
+   
+- gazebo serverとNav2ノードを起動します。
+
+   ```
+   ros2 launch megarover3_gazebo gazebo_nav.launch.py 
+   ```
+
 
 ## ライセンス
 

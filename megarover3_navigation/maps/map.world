@@ -1,0 +1,426 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="map_world">
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <model name="obs_176_132">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-1.1999999999999993 2.6000000000000014 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_220_132">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>1.0 2.6000000000000014 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_224_136">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>1.200000000000001 2.4000000000000004 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_172_140">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-1.4000000000000004 2.200000000000001 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_236_144">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>1.8000000000000007 2.0 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_160_148">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-2.0 1.8000000000000007 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_156_152">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-2.1999999999999993 1.6000000000000014 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_240_152">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>2.0 1.6000000000000014 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_196_160">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-0.1999999999999993 1.200000000000001 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_244_160">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>2.200000000000001 1.200000000000001 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_248_164">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>2.4000000000000004 1.0 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_144_172">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-2.8 0.6000000000000014 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_252_172">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>2.6000000000000014 0.6000000000000014 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_140_180">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-3.0 0.20000000000000107 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_140_184">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-3.0 0.0 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_252_192">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>2.6000000000000014 -0.3999999999999986 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_148_196">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-2.5999999999999996 -0.5999999999999996 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_248_200">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>2.4000000000000004 -0.7999999999999989 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_152_204">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>-2.3999999999999995 -1.0 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_240_212">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>2.0 -1.4000000000000004 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_236_220">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>1.8000000000000007 -1.799999999999999 0.5 0 0 0</pose>
+      </link>
+    </model>
+    <model name="obs_220_232">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 0.2 1.0</size></box>
+          </geometry>
+          <material>
+            <ambient>0 0 0 1</ambient>
+          </material>
+        </visual>
+        <pose>1.0 -2.3999999999999995 0.5 0 0 0</pose>
+      </link>
+    </model>
+  </world>
+</sdf>

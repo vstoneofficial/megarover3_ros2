@@ -105,28 +105,28 @@ def launch_setup(context, params, param_name_suffix=''):
             condition=LaunchConfigurationEquals('option', '_lrf'),
         ),
 
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(get_package_share_directory('realsense2_camera'), 'launch', 'rs_launch.py')),
-            condition=LaunchConfigurationEquals('option', '_depthcam'),
-            launch_arguments={
-                'unite_imu_method': '2',
-                'pointcloud.enable': 'true',
-                'log_level': 'info',
-                'pointcloud.stream_filter': '2',
-                'pointcloud.stream_index_filter': '0',
-                'depth_module.profile': '640,480,15',
-                'enable_depth': 'true',
-                'align_depth.enable': 'false',
-                'rgb_camera.profile': '640,480,15',
-                'enable_infra': 'true',
-                'enable_infra1': 'true',
-                'enable_infra2': 'true',
-                'enable_gyro': 'true',
-                'enable_accel': 'true',
-                'enable_sync': 'false',
-            }.items()
-        ),
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource(
+        #         os.path.join(get_package_share_directory('realsense2_camera'), 'launch', 'rs_launch.py')),
+        #     condition=LaunchConfigurationEquals('option', '_depthcam'),
+        #     launch_arguments={
+        #         'unite_imu_method': '2',
+        #         'pointcloud.enable': 'true',
+        #         'log_level': 'info',
+        #         'pointcloud.stream_filter': '2',
+        #         'pointcloud.stream_index_filter': '0',
+        #         'depth_module.profile': '640,480,15',
+        #         'enable_depth': 'true',
+        #         'align_depth.enable': 'false',
+        #         'rgb_camera.profile': '640,480,15',
+        #         'enable_infra': 'true',
+        #         'enable_infra1': 'true',
+        #         'enable_infra2': 'true',
+        #         'enable_gyro': 'true',
+        #         'enable_accel': 'true',
+        #         'enable_sync': 'false',
+        #     }.items()
+       #  ),
     ]
 
 
