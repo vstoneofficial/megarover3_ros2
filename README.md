@@ -251,10 +251,20 @@ pub_odomノードとrviz上可視化
       ros2 launch megarover3_navigation navigation.launch.py
       ```
    - メガローバーVer.3.0用のNavigation2のパラメータは`megarover3_navigation`パッケージの[`config/nav2_params.yaml`](./megarover3_navigation/config/nav2_params.yaml) フォルダにあります。
+### gazeboを使用したシミュレーション
+   - 初回のgazeboを起動する際に環境変数を更新します。
+      ```
+      source /usr/share/gazebo/setup.sh
+      ```
+   
+   - シェルを起動時にgazeboのオーバーレイされるように設定します。
+      ```
+      echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc 
+      ```
+
 
 #### gazeboでシミュレーションする。
    - 
-
 
 1. 空のワールドを起動します。
 
