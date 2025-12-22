@@ -11,22 +11,39 @@
 
 - [概要](#%E6%A6%82%E8%A6%81)
 - [必要機器 & 開発環境](#%E5%BF%85%E8%A6%81%E6%A9%9F%E5%99%A8--%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83)
+- [ファイルの構成](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E6%A7%8B%E6%88%90)
 - [パッケージ構成](#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E6%A7%8B%E6%88%90)
 - [インストール方法](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95)
 - [使用方法](#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95)
     - [URDFモデルの表示](#urdf%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E8%A1%A8%E7%A4%BA)
     - [メガローバー（実機）との通信](#%E3%83%A1%E3%82%AC%E3%83%AD%E3%83%BC%E3%83%90%E3%83%BC%E5%AE%9F%E6%A9%9F%E3%81%A8%E3%81%AE%E9%80%9A%E4%BF%A1)
-        - [有線シリアル接続の場合](#%E6%9C%89%E7%B7%9A%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%AB%E6%8E%A5%E7%B6%9A%E3%81%AE%E5%A0%B4%E5%90%88)
-        - [Wi-Fi 接続の場合](#wi-fi-%E6%8E%A5%E7%B6%9A%E3%81%AE%E5%A0%B4%E5%90%88)
-    - [odometryをpublish](#odometry%E3%82%92publish)
-    - [台車ロボットをROS 2経由で遠隔操作](#%E5%8F%B0%E8%BB%8A%E3%83%AD%E3%83%9C%E3%83%83%E3%83%88%E3%82%92ros-2%E7%B5%8C%E7%94%B1%E3%81%A7%E9%81%A0%E9%9A%94%E6%93%8D%E4%BD%9C)
-        - [キーボードで操作](#%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89%E3%81%A7%E6%93%8D%E4%BD%9C)
-        - [マウスで操作](#%E3%83%9E%E3%82%A6%E3%82%B9%E3%81%A7%E6%93%8D%E4%BD%9C)
+    - [有線シリアル接続の場合](#%E6%9C%89%E7%B7%9A%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%AB%E6%8E%A5%E7%B6%9A%E3%81%AE%E5%A0%B4%E5%90%88)
+    - [Wi-Fi 接続の場合](#wi-fi-%E6%8E%A5%E7%B6%9A%E3%81%AE%E5%A0%B4%E5%90%88)
+  - [ROS 2トピックとメッセージ](#ros-2%E3%83%88%E3%83%94%E3%83%83%E3%82%AF%E3%81%A8%E3%83%A1%E3%83%83%E3%82%BB%E3%83%BC%E3%82%B8)
+  - [odometryをpublish](#odometry%E3%82%92publish)
+  - [台車ロボットをROS 2経由で遠隔操作](#%E5%8F%B0%E8%BB%8A%E3%83%AD%E3%83%9C%E3%83%83%E3%83%88%E3%82%92ros-2%E7%B5%8C%E7%94%B1%E3%81%A7%E9%81%A0%E9%9A%94%E6%93%8D%E4%BD%9C)
+    - [キーボードで操作](#%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89%E3%81%A7%E6%93%8D%E4%BD%9C)
+    - [マウスで操作](#%E3%83%9E%E3%82%A6%E3%82%B9%E3%81%A7%E6%93%8D%E4%BD%9C)
+  - [URDFモデルのオプション有効化方法](#urdf%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3%E6%9C%89%E5%8A%B9%E5%8C%96%E6%96%B9%E6%B3%95)
+  - [SLAM](#slam)
     - [SLAM ToolboxでSLAM](#slam-toolbox%E3%81%A7slam)
+      - [LRFオプションTG30](#lrf%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3tg30)
     - [SLAM gmappingでSLAM](#slam-gmapping%E3%81%A7slam)
-    - [作成した地図の保存方法](#%E4%BD%9C%E6%88%90%E3%81%97%E3%81%9F%E5%9C%B0%E5%9B%B3%E3%81%AE%E4%BF%9D%E5%AD%98%E6%96%B9%E6%B3%95)
-    - [Navigation2を使用したナビゲーション](#navigation2%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E3%83%8A%E3%83%93%E3%82%B2%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
-    - [gazeboを使用したシミュレーション](#gazebo%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
+  - [作成した地図の保存方法](#%E4%BD%9C%E6%88%90%E3%81%97%E3%81%9F%E5%9C%B0%E5%9B%B3%E3%81%AE%E4%BF%9D%E5%AD%98%E6%96%B9%E6%B3%95)
+  - [Navigation2を使用したナビゲーション](#navigation2%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E3%83%8A%E3%83%93%E3%82%B2%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
+    - [Nav2パッケージをインストールする。](#nav2%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B%E3%80%82)
+    - [Nav2でナビゲーションする。](#nav2%E3%81%A7%E3%83%8A%E3%83%93%E3%82%B2%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%99%E3%82%8B%E3%80%82)
+  - [Gazebo](#gazebo)
+    - [gazeboシミュレーションの準備](#gazebo%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E6%BA%96%E5%82%99)
+    - [gazeboでシミュレーションする](#gazebo%E3%81%A7%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%99%E3%82%8B)
+      - [空のワールドを起動する](#%E7%A9%BA%E3%81%AE%E3%83%AF%E3%83%BC%E3%83%AB%E3%83%89%E3%82%92%E8%B5%B7%E5%8B%95%E3%81%99%E3%82%8B)
+      - [gazeboでSLAMする](#gazebo%E3%81%A7slam%E3%81%99%E3%82%8B)
+      - [gazeboでナビゲーションする](#gazebo%E3%81%A7%E3%83%8A%E3%83%93%E3%82%B2%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%99%E3%82%8B)
+
+
+
+
+
 - [ライセンス](#%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9)
 - [貢献](#%E8%B2%A2%E7%8C%AE)
 
@@ -34,7 +51,8 @@
 
 ## 概要
 
-このパッケージは、メガローバーVer.3.0台車ロボット用のROS 2パッケージを提供します。このパッケージには、ロボットの制御、センサーの読み取り、およびロボットのアプリケーションの開発に必要なノードが含まれています。
+このパッケージは、メガローバーVer.3.0台車ロボット用のROS 2パッケージを提供します。  
+このパッケージには、ロボットの制御、センサーの読み取り、およびロボットのアプリケーションの開発に必要なノードが含まれています。
 
 ## 必要機器 & 開発環境
 - メガローバーVer.3.0:
@@ -64,12 +82,13 @@
 - `megarover_description`: メガローバーVer.3.0の物理モデルやURDFモデルを含んでいるパッケージです。
 - `megarover3_gazebo`: メガローバーVer.3.0のgazebo起動に関連するノードやlaunchファイルを提供します。
 
+
 ## インストール方法
 
 このパッケージをインストールするには、以下の手順に従ってください。
 
-1. [こちら](https://docs.ros.org/en/humble/Installation.html)の手順に従って、ROS 2 Humbleをインストールしてください。
-2. [micro-ROS](https://micro.ros.org/) Agent のセットアップ: *(実機を動かす場合のみ必要)*
+[こちら](https://docs.ros.org/en/humble/Installation.html)の手順に従って、ROS 2 Humbleをインストールしてください。
+1. [micro-ROS](https://micro.ros.org/) Agent のセットアップ: *(実機を動かす場合のみ必要)*
 
    ```bash
    $ mkdir -p ~/uros_ws/src
@@ -85,7 +104,7 @@
    $ source install/local_setup.bash
    ```
 
-3. 必要なリポジトリをワークスペースにクローンしてください:
+2. このリポジトリをワークスペースにクローンしてください:
 
    ```bash
    $ mkdir -p ~/ros2_ws/src
@@ -96,20 +115,20 @@
    $ rosdep install -r --from-paths . --ignore-src --rosdistro $ROS_DISTRO -y
    ```
 
-4. ワークスペースをビルド:
+3. ワークスペースをビルド:
 
    ```bash
    $ cd ~/ros2_ws
    $ colcon build --symlink-install
    ```
 
-5. ワークスペースのオーバレイ作業:
+4. ワークスペースのオーバレイ作業:
 
    ```bash
    source ~/ros2_ws/install/local_setup.bash
    ```
 
-6. シェルを起動時にワークスペースがオーバーレイされるように設定します。
+5. シェルを起動時にワークスペースがオーバーレイされるように設定します。
 
    ```bash
    $ echo "source ~/uros_ws/install/local_setup.bash" >> ~/.bashrc 
@@ -122,8 +141,9 @@
 
 ### URDFモデルの表示
 以下のコマンドを実行して、メガローバーのURDFモデルを表示します。
+rover:=mega3の部分は、使用しているロボットに合わせて変更してください。　対応モデル mega3/f120a
    ```
-   ros2 launch megarover_description mega3_view.launch.py
+   ros2 launch megarover_description display.launch.py rover:=mega3
    ```
 
 ### メガローバー（実機）との通信
@@ -138,11 +158,26 @@
    ```
    ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
    ```
+### ROS 2トピックとメッセージ
+本パッケージで使用している主なROS2トピックとメッセージは以下の通りです。  
+```
+/rover_twist  
+   役割：ROS2側からロボットへ送る速度指令トピックです。  
 
+/rover_odo  
+   役割：マイコン側からROS2側へ送信されるロボットの自己運動情報です。  
+       （線速度・角速度が含まれます）
+
+/rover_sensor  
+   役割：マイコン側からROS2側へ送信されるセンサ情報です。  
+      ・配列要素  
+         - data[0]：デジタル入力の値  
+         - data[1]：バッテリー電圧値  
+```
 ### odometryをpublish
 pub_odomノードとrviz上可視化
    ```
-   ros2 launch megarover3_bringup robot.launch.py
+   ros2 launch megarover3_bringup robot.launch.py rover:=mega3
    ```
 
 ### 台車ロボットをROS 2経由で遠隔操作
@@ -157,7 +192,35 @@ pub_odomノードとrviz上可視化
    ```
    ros2 launch megarover3_bringup mouse_teleop.launch.py
    ```
+### URDFモデルのオプション有効化方法
+mecanumrover_description/urdf/mecanum3.xacroに定義されている各種オプションはコメントの切り替えによって有効／無効を設定できます。  
+ここでは、LRF TG30オプションを例に設定手順を説明します。  
+1. オプションの有効化
+   コメントアウトを解除して、該当オプションを読み込むようにします。
 
+      ```
+      <!-- OPTION: LRF TG30 -->
+      <xacro:include filename="$(find vs_rover_options_description)/urdf/lrf/tg30_mega3.xacro" />
+      ```
+
+2. オプションの無効化
+   オプションを使用しない場合は、行全体をコメントアウトしてください。
+
+      ```
+      <!-- OPTION: LRF TG30 -->
+      <!-- <xacro:include filename="$(find vs_rover_options_description)/urdf/lrf/tg30_mega3.xacro" /> -->
+      ```
+
+3. 反映確認
+   設定を保存後、以下のコマンドでURDFモデルを確認できます。
+   RViz2上でLRF（TG30）が表示されていれば、有効化が正しく反映されています。
+   rover:=x40aの部分は、使用しているロボットに合わせて変更してください。　対応モデル x40a/x120a
+
+      ```
+      ros2 launch megarover_description display.launch.py rover:=mega3
+      ```
+
+## SLAM
 ### SLAM ToolboxでSLAM
   ToolboxはROS2のナビゲーション機（Nav2）と一緒に使える標準的なパッケージです。  
   現在も活発に更新が続いており、広い範囲での地図作成やループ修正にも対応しています。  
@@ -169,8 +232,7 @@ pub_odomノードとrviz上可視化
       git clone -b humble https://github.com/YDLIDAR/ydlidar_ros2_driver.git
       ```
    - LRFに関するパラメータは[TG30.yaml](./megarover3_bringup/params/TG30.yaml)にあります。
-
-   > **Warning**
+> **Warning**
    > ydlidar_ros2_driverの中のydlidar_ros2_driver_node.cppを修正が必要。[詳細](https://github.com/YDLIDAR/ydlidar_ros2_driver/pull/20)
 
 1. SLAM Toolboxの準備
@@ -182,16 +244,16 @@ pub_odomノードとrviz上可視化
 2. SLAM ToolboxでSLAMする。
    - ロボット実機と通信できたら、以下のコマンドでodom publisher、ロボットのurdf表示、LiDAR関連のlaunchファイルを起動します。
       ```
-      ros2 launch megarover3_bringup robot.launch.py rover:=mega3 option:=_lrf
+      ros2 launch megarover3_bringup robot.launch.py rover:=mega3
       ```
 
    - 新しいターミナルで以下のコマンドを使用してSLAMを開始します。
       ```
-      ros2 launch megarover3_navigation slam.launch.py
+      ros2 launch megarover3_navigation slam.launch.py rover:=mega3
       ```
-      付属のVS-C3無線コントローラもしくはROS 2のteleopで動かして、mappingする。
 
-   - メガローバーVer.3.0用のSLAM Toolboxのパラメータは`megarover3_navigation`パッケージの[`config`](./megarover3_navigation/config/) フォルダにあります。
+- 付属のVS-C3無線コントローラもしくはROS 2のteleopで動かして、mappingする。  
+  メガローバーVer.3.0用のSLAM Toolboxのパラメータは`megarover3_navigation`パッケージの[`config`](./megarover3_navigation/config/) フォルダにあります。
 
 ### SLAM gmappingでSLAM
   gmappingはROS1時代から広く使われてきたSLAMの手法です。  
@@ -200,7 +262,6 @@ pub_odomノードとrviz上可視化
   ただし学習や体験を目的に「まずは地図を作る流れを試してみたい」といった場合には活用できます。
 
 1. [SLAM gmapping](https://github.com/Project-MANAS/slam_gmapping)を`src`フォルダにクローンして、buildしてください。
-
    ```
    git clone https://github.com/Project-MANAS/slam_gmapping.git
    ```
@@ -208,16 +269,15 @@ pub_odomノードとrviz上可視化
 2. SLAM gmappingでSLAMする。
    - ロボット実機と通信できたら、以下のコマンドでodom publisher、ロボットのurdf表示、LiDAR関連のlaunchファイルを起動します。
       ```
-      ros2 launch megarover3_bringup robot.launch.py rover:=mega3 option:=_lrf
+      ros2 launch megarover3_bringup robot.launch.py rover:=mega3
       ```
 
    - 新しいターミナルで以下のコマンドを使用してSLAMを開始します。
       ```
       ros2 launch megarover3_navigation gmapping.launch.py
       ```
-      付属のVS-C3無線コントローラもしくはROS 2のteleopで動かして、mappingする。
-
-   - メガローバーVer.3.0用のSLAM gmappingのパラメータは[`slam_gmapping.cpp`](https://github.com/Project-MANAS/slam_gmapping/blob/eloquent-devel/slam_gmapping/src/slam_gmapping.cpp)にあります。\
+- 付属のVS-C3無線コントローラもしくはROS 2のteleopで動かして、mappingする。    
+メガローバーVer.3.0用のSLAM gmappingのパラメータは[`slam_gmapping.cpp`](https://github.com/Project-MANAS/slam_gmapping/blob/eloquent-devel/slam_gmapping/src/slam_gmapping.cpp)にあります。\
    [ROS 2 workspaceにクローンした場合](../slam_gmapping/slam_gmapping/src/slam_gmapping.cpp)
    - 変更下パラメータは下記のようになります。
       ```cpp
@@ -231,94 +291,113 @@ pub_odomノードとrviz上可視化
    ```
    ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/megarover3_ros2/megarover3_navigation/maps/YOUR_MAP_NAME
    ```
-
-### Navigation2を使用したナビゲーション
-1. Nav2パッケージをインストールする。
+## Navigation2を使用したナビゲーション
+### Nav2パッケージをインストールする。
    ```
-   $ sudo apt install ros-humble-navigation2
-   $ sudo apt install ros-humble-nav2-bringup
+   sudo apt install ros-humble-navigation2
+   sudo apt install ros-humble-nav2-bringup
+   sudo apt install ros-humble-nav2-rviz-plugins
    ```
 
-2. Nav2でナビゲーションする。
-   - ロボット実機と通信できたら、以下のコマンドでodom publisher、ロボットのurdf表示、LiDAR関連のlaunchファイルを起動します。
-      ```
-      ros2 launch megarover3_bringup robot.launch.py rover:=mega3 option:=_lrf
-      ```
+### Nav2でナビゲーションする。
+   引数で地図ファイルのパスを指定する方法と、launchファイル内で地図ファイルのパスを指定する方法があります。  
+- launchファイル内で指定する方法   
+   メカナムローバー用の地図ファイルを`megarover3_navigation/maps/`フォルダに保存、もしくは移動させます。  
+   [`navigation.launch.py`](./megarover3_navigation/launch/navigation.launch.py#L35) の行35を探し、“ファイル名.yaml”を、先ほど保存，移動させた地図ファイルのファイル名に合わせて設定します。 
+   ```
+   get_package_share_directory('megarover3_navigation'),
+   'maps',
+   'YOUR_MAP_NAME.yaml'))
+   ```
+
+1. ロボット実機と通信できたら、以下のコマンドでpub_odom、ロボットのurdf表示、LiDAR関連のlaunchファイルを起動します。
+   ```
+   ros2 launch megarover3_bringup nav_robot.launch.py rover:=mega3
+   ```
    
-   - [`navigation.launch.py`](./megarover3_navigation/launch/navigation.launch.py#L35) の行35のマップ名を使用したいマップ名に変更する。\
-   新しいターミナルで以下のコマンドを使用してナビゲーションを開始します。
+2. 新しいターミナルで以下のコマンドを使用してナビゲーションを開始します。  
+   map:=YOUR_MAP_NAMEの部分は、使用したい地図ファイルのフルパスに置き換えることでnavigation.launch.py内を書き換えずに起動することも可能です。
+
       ```
-      ros2 launch megarover3_navigation navigation.launch.py
+      ros2 launch megarover3_navigation navigation.launch.py rover:=mecanum3 map:=YOUR_MAP_NAME
       ```
-   - メガローバーVer.3.0用のNavigation2のパラメータは`megarover3_navigation`パッケージの[`config/nav2_params.yaml`](./megarover3_navigation/config/nav2_params.yaml) フォルダにあります。
-### gazeboを使用したシミュレーション
-   - 初回のgazeboを起動する際に環境変数を更新します。
+- メガローバーVer.3.0用のNavigation2のパラメータは`megarover3_navigation`パッケージの[`config`](./megarover3_navigation/config/) フォルダにあります。  
+roverタイプごとにパラメータファイルが分かれていますので、使用しているロボットに合わせて調整してください。
+
+> **Warning**  
+   > ナビゲーションを行う場合、移動命令のrover_twistトピックが競合しないようにするため、rover_twistをpublishするノードは起動しないでください。  
+   > 付属のVS-C3無線コントローラはROS2経由で操作するわけではないため、緊急時の手動操作として使用可能です。
+## Gazebo
+
+### gazeboシミュレーションの準備
+- 初回のgazeboを起動する際に環境変数を更新します。
+   ```
+   source /usr/share/gazebo/setup.sh
+   ```
+
+- シェルを起動時にgazeboのオーバーレイされるように設定します。  
+   ```
+   echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
+   ```
+
+### gazeboでシミュレーションする
+#### 空のワールドを起動する  
+床とロボットモデルのみ存在するベースワールドになります。他プログラムと連携する際に利用することを想定したlaunchファイルです。
+  1. 空のワールドを起動します。
       ```
-      source /usr/share/gazebo/setup.sh
-      ```
-   
-   - シェルを起動時にgazeboのオーバーレイされるように設定します。
-      ```
-      echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc 
+      ros2 launch megarover3_gazebo gazebo_bringup.launch.py　rover:=mega3
       ```
 
+  2. 壁をシミュレータ内にインポートします。  
+      wall:=Wall.stlの部分は、fwdsrover_xna_gazebo/meshes内にあるSTLファイルに書き換えることで、壁としてシミュレータ内にインポートすることができます。
+      ```
+      ros2 launch megarover3_gazebo spawn_wall.launch.py　wall:=Wall.stl
+      ```
 
-#### gazeboでシミュレーションする。
-   - 
+  3. ローバーをマウスで遠隔操作するには、新しいターミナル ウィンドウで以下のコマンドを使用して遠隔操作ノードを起動します。
+      ```
+      ros2 launch megarover3_bringup mouse_teleop.launch.py
+      ```
 
-1. 空のワールドを起動します。
+#### gazeboでSLAMする  
+gazebo内のワールドの地図データを作成することができます。
+  1. gazebo serverとSLAMノードを起動します。
+      ```
+      ros2 launch megarover3_gazebo gazebo_slam.launch.py rover:=mega3  wall:=Wall.stl
+      ```
 
-   ```
-   ros2 launch megarover3_gazebo gazebo_bringup.launch.py
-   ```
+  2. ローバーをマウスで遠隔操作するには、新しいターミナル ウィンドウで以下のコマンドを使用して遠隔操作ノードを起動します。
+      ```
+      ros2 launch megarover3_bringup mouse_teleop.launch.py
+      ```
 
-2. 壁をシミュレータ内にインポートします
+  3. 下記のコマンドで地図を`megarover3_ros2/megarover3_gazebo/maps/`フォルダ内に保存する。  
+   YOUR_MAP_NAMEは保存したい地図の名前に置き換えてください。
+      ```
+      ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/megarover3_ros2/megarover3_gazebo/maps/YOUR_MAP_NAME
+      ```
 
-   ```
-   ros2 launch megarover3_gazebo spawn_wall.launch.py
-   ```
+#### gazeboでナビゲーションする。  
+引数で地図ファイルのパスを指定する方法と、launchファイル内で地図の名前を指定する方法があります。
 
-3. ローバーをマウスで遠隔操作するには、新しいターミナル ウィンドウで以下のコマンドを使用して遠隔操作ノードを起動します。
+  - 使用する地図ファイルを適用する  
+      ここではlaunchファイル内で指定する方法を説明します。   
+   [`gazebo_nav.launch.py`](./megarover3_gazebo/launch/gazebo_nav.launch.py#L35) の行35を探し、“ファイル名.yaml”を、先ほど保存した地図ファイルの名前に合わせて設定します。  
 
-   ```
-   ros2 launch megarover3_bringup mouse_teleop.launch.py
-   ```
-
-#### gazeboでSLAMする。
-
-1. gazebo serverとSLAMノードを起動します。
-
-   ```
-   ros2 launch megarover3_gazebo gazebo_slam.launch.py 
-   ```
-
-2. ローバーをマウスで遠隔操作するには、新しいターミナル ウィンドウで以下のコマンドを使用して遠隔操作ノードを起動します。
-
-   ```
-   ros2 launch megarover3_bringup mouse_teleop.launch.py
-   ```
-
-3. 下記のコマンドで地図を`megarover3_ros2/megarover3_gazebo/maps/`フォルダ内に保存する。
-
-   ```
-   ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/megarover3_ros2/megarover3_gazebo/maps/YOUR_MAP_NAME
-   ```
-
-#### gazeboでナビゲーションする。
-- [`gazebo_nav.launch.py`](./megarover3_gazebo/launch/gazebo_nav.launch.py#L35) の行35のマップ名を使用したいマップ名に変更する。
-   　 次の行を探し、“ファイル名.yaml”を、先ほど保存，移動させた地図ファイルのファイル名に合わせて設定します。
-
-   ```
+      ```
       get_package_share_directory('megarover3_gazebo'),
       'maps',
       'YOUR_MAP_NAME.yaml'))
-   ```
+      ```
    
-- gazebo serverとNav2ノードを起動します。
+   - gazebo serverとNav2ノードを起動します。  
+      map:=YOUR_MAP_NAMEの部分は、使用したい地図ファイルのフルパスに置き換えることでgazebo_nav.launch.py内を書き換えずに起動することも可能です。
+      ```
+      ros2 launch megarover3_gazebo gazebo_nav.launch.py rover:=mega3 wall:=Wall.stl map:=YOUR_MAP_NAME
+      ```
 
-   ```
-   ros2 launch megarover3_gazebo gazebo_nav.launch.py 
-   ```
+> **Warning**  
+   > ナビゲーションを行う場合、移動命令のrover_twistトピックが競合しないようにするため、rover_twistをpublishするノードは起動しないでください。
 
 
 ## ライセンス

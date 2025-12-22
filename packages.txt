@@ -31,3 +31,4 @@ ros-humble-topic-tools
 ros-humble-image-transport
 ros-humble-xacro
 ros-humble-mouse-teleop
+ros-humble-joy
