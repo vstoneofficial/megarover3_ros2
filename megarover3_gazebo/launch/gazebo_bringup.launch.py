@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# English comments only in code.
 
 import os
 import subprocess
@@ -79,19 +80,28 @@ def _create_urdf_and_rsp(context, *args, **kwargs):
         "urdf"
     )
 
+    # Select xacro by rover type
     if rover == "mega3":
         xacro_file = os.path.join(urdf_dir, "mega3.xacro")
-    else:
+    elif rover == "f120a":
         xacro_file = os.path.join(urdf_dir, "f120a.xacro")
+    elif rover == "s40a_lb":
+        xacro_file = os.path.join(urdf_dir, "s40a_lb.xacro")
+    else:
+        raise RuntimeError(
+            f"[gazebo_bringup] Unknown rover type: {rover}"
+        )
 
     fd, urdf_path = tempfile.mkstemp(prefix="robot_", suffix=".urdf")
     os.close(fd)
 
+    # Generate URDF from xacro
     gen = ExecuteProcess(
         cmd=[FindExecutable(name="xacro"), xacro_file, "-o", urdf_path],
         output="screen",
     )
 
+    # robot_state_publisher using generated URDF
     rsp = ExecuteProcess(
         cmd=[
             "ros2", "run",

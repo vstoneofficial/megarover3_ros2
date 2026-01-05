@@ -94,7 +94,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'rover',
             default_value='mega3',
-            description='Rover type (mega3 or f120a)'
+            description='Rover type (mega3, f120a, s40a_lb)'
         ),
 
         DeclareLaunchArgument(

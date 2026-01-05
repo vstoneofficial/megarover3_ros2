@@ -41,8 +41,12 @@ def generate_launch_description():
     # --------------------------------------------------
     auto_params_file = PythonExpression([
         '"', nav_pkg, '/config/',
-        '" + ("mega3_nav2_params.yaml" if "', rover,
-        '" == "mega3" else "f120a_nav2_params.yaml")'
+        '" + ('
+        '"mega3_nav2_params.yaml" if "', rover, '" == "mega3" else '
+        '"f120a_nav2_params.yaml" if "', rover, '" == "f120a" else '
+        '"s40a_lb_nav2_params.yaml" if "', rover, '" == "s40a_lb" else '
+        '"nav2_params.yaml"'
+        ')'
     ])
 
     # --------------------------------------------------
@@ -106,7 +110,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'rover',
             default_value='mega3',
-            description='Rover type: mega3 or f120a'
+            description='Rover type: mega3 , f120a , s40a_lb'
         ),
 
         DeclareLaunchArgument(

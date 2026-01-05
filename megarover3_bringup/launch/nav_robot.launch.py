@@ -18,11 +18,9 @@ import os
 import yaml
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
-from launch.substitutions import LaunchConfiguration, Command
-from launch.actions import IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.parameter_descriptions import ParameterValue
@@ -93,10 +91,10 @@ def launch_setup(context, params, param_name_suffix=''):
             name='pub_odom'
         ),
 
-#        IncludeLaunchDescription(
-#            PythonLaunchDescriptionSource(
-#               os.path.join(get_package_share_directory('megarover3_bringup'), 'launch', 'ydlidar_tg30_launch.py')),
-#        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+               os.path.join(get_package_share_directory('megarover3_bringup'), 'launch', 'ydlidar_tg30_launch.py')),
+        ),
 
     ]
 

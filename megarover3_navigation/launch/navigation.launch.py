@@ -20,14 +20,14 @@ from launch.conditions import IfCondition, LaunchConfigurationEquals
 def generate_launch_description():
     nav2_launch_file_dir = os.path.join(
         get_package_share_directory('megarover3_navigation'), 'launch')
-
+        
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     map_dir = LaunchConfiguration(
         'map',
         default=os.path.join(
             get_package_share_directory('megarover3_navigation'),
             'maps',
-            'map.yaml'))  # change this to your own map for navigation
+            'test.yaml'))  # change this to your own map for navigation
 
     mega3_param_dir = LaunchConfiguration(
         'params_file',
@@ -42,7 +42,14 @@ def generate_launch_description():
             get_package_share_directory('megarover3_navigation'),
             'config',
             'f120a_nav2_params.yaml'))
-
+            
+    s40a_lb_param_dir = LaunchConfiguration(
+        'params_file',
+        default=os.path.join(
+            get_package_share_directory('megarover3_navigation'),
+            'config',
+            's40a_lb_nav2_params.yaml'))
+            
     rviz_config_dir = os.path.join(
         get_package_share_directory('megarover3_navigation'),
         'rviz',
@@ -53,28 +60,34 @@ def generate_launch_description():
             'rover',
             default_value='mega3',
             description='Megarover model',
-            choices=['mega3', 'f120a']),
-
+            choices=['mega3', 'f120a', 's40a_lb']),
+            
         DeclareLaunchArgument(
             'map',
             default_value=map_dir,
             description='Full path to map file to load'),
-
+            
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
-
+            
         DeclareLaunchArgument(
             'params_file',
             condition=LaunchConfigurationEquals('rover', 'mega3'),
             default_value=mega3_param_dir,
             description='Full path to param file to load'),
-
+            
         DeclareLaunchArgument(
             'params_file',
             condition=LaunchConfigurationEquals('rover', 'f120a'),
             default_value=f120a_param_dir,
+            description='Full path to param file to load'),
+            
+        DeclareLaunchArgument(
+            'params_file',
+            condition=LaunchConfigurationEquals('rover', 's40a_lb'),
+            default_value=s40a_lb_param_dir,
             description='Full path to param file to load'),
 
         IncludeLaunchDescription(
@@ -95,6 +108,16 @@ def generate_launch_description():
                 'map': map_dir,
                 'use_sim_time': use_sim_time,
                 'params_file': f120a_param_dir}.items(),
+        ),
+        
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                [nav2_launch_file_dir, '/bringup_launch.py']),
+            condition=LaunchConfigurationEquals('rover', 's40a_lb'),
+            launch_arguments={
+                'map': map_dir,
+                'use_sim_time': use_sim_time,
+                'params_file': s40a_lb_param_dir}.items(),
         ),
 
         Node(
