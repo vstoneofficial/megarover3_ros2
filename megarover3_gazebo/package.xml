@@ -19,7 +19,10 @@
   <exec_depend>ros2_control</exec_depend>
   <exec_depend>ros2_controllers</exec_depend>
   <exec_depend>controller_manager</exec_depend>
+  <exec_depend>rviz2</exec_depend>
   <depend>megarover_description</depend>
+  <depend>megarover3_bringup</depend>
+  <exec_depend>megarover3_navigation</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
@@ -28,4 +31,3 @@
     <build_type>ament_cmake</build_type>
   </export>
 </package>
-

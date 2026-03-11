@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from launch import LaunchDescription
 from launch_ros.actions import Node
+
 
 def generate_launch_description():
 
@@ -10,6 +8,7 @@ def generate_launch_description():
         package='joy',
         executable='joy_node',
         name='joy_node',
+        output='screen',
         parameters=[
             {'deadzone': 0.05},
             {'autorepeat_rate': 20.0},
@@ -21,11 +20,17 @@ def generate_launch_description():
         package='megarover3_bringup',
         executable='rover_gamepad',
         name='rover_gamepad',
+        output='screen',
         emulate_tty=True,
+        remappings=[
+            ('/joy', '/joy'),
+        ],
         parameters=[
             {'publish_rate': 100.0},
         ]
     )
 
-    return LaunchDescription([joy_node, rover_gamepad])
-
+    return LaunchDescription([
+        joy_node,
+        rover_gamepad
+    ])

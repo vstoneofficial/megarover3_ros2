@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 import os
+import shutil
 import tempfile
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, RegisterEventHandler, SetLaunchConfiguration
+from launch.event_handlers import OnShutdown
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
@@ -79,21 +81,31 @@ def _gen_sdf_and_spawn(context, *args, **kwargs):
         f.write(sdf)
 
     # Spawn entity in Gazebo
-    return [Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
-        arguments=[
-            '-entity', entity,
-            '-file', sdf_path,
-            '-x', str(x),
-            '-y', str(y),
-            '-z', str(z),
-            '-R', str(roll),
-            '-P', str(pitch),
-            '-Y', str(yaw),
-        ],
-        output='screen'
-    )]
+    return [
+        SetLaunchConfiguration('tmp_wall_dir', tmpdir),
+        Node(
+            package='gazebo_ros',
+            executable='spawn_entity.py',
+            arguments=[
+                '-entity', entity,
+                '-file', sdf_path,
+                '-x', str(x),
+                '-y', str(y),
+                '-z', str(z),
+                '-R', str(roll),
+                '-P', str(pitch),
+                '-Y', str(yaw),
+            ],
+            output='screen'
+        )
+    ]
+
+
+def _cleanup_tmp_wall(context, *args, **kwargs):
+    tmpdir = LaunchConfiguration('tmp_wall_dir').perform(context)
+    if tmpdir and os.path.isdir(tmpdir):
+        shutil.rmtree(tmpdir, ignore_errors=True)
+    return []
 
 
 def generate_launch_description():
@@ -120,7 +132,10 @@ def generate_launch_description():
         DeclareLaunchArgument('roll',  default_value='0.0'),
         DeclareLaunchArgument('pitch', default_value='0.0'),
         DeclareLaunchArgument('yaw',   default_value='0.0'),
+        DeclareLaunchArgument('tmp_wall_dir', default_value=''),
 
         OpaqueFunction(function=_gen_sdf_and_spawn),
+        RegisterEventHandler(
+            OnShutdown(on_shutdown=[OpaqueFunction(function=_cleanup_tmp_wall)])
+        ),
     ])
-

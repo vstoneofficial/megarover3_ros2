@@ -1,14 +1,12 @@
 from ament_index_python.packages import get_package_share_path
 from launch.actions import DeclareLaunchArgument
 from launch_ros.substitutions import FindPackageShare
-
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
-
-
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+
 
 def generate_launch_description():
     rviz_config_path = get_package_share_path('megarover3_navigation') / 'rviz/slam.rviz'
@@ -29,19 +27,13 @@ def generate_launch_description():
                 PathJoinSubstitution([
                     FindPackageShare('megarover3_navigation'),
                     'launch',
-                    'online_sync_launch.py'
+                    'internal/slam_sync.launch.py'
                 ])
             ]),
             launch_arguments={
                 'use_sim_time': 'false',
             }.items()
         )
-    
-    pub_odom_node = Node(
-        package='megarover3_bringup',
-        executable='pub_odom',
-        name='pub_odom'
-    )
 
     return LaunchDescription([
         rviz_arg,

@@ -1,9 +1,8 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, LogInfo, TimerAction
 from launch.substitutions import (
     LaunchConfiguration,
     PathJoinSubstitution,
-    PythonExpression,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
@@ -37,19 +36,6 @@ def generate_launch_description():
     ])
 
     # --------------------------------------------------
-    # Auto-select Nav2 params by rover type
-    # --------------------------------------------------
-    auto_params_file = PythonExpression([
-        '"', nav_pkg, '/config/',
-        '" + ('
-        '"mega3_nav2_params.yaml" if "', rover, '" == "mega3" else '
-        '"f120a_nav2_params.yaml" if "', rover, '" == "f120a" else '
-        '"s40a_lb_nav2_params.yaml" if "', rover, '" == "s40a_lb" else '
-        '"nav2_params.yaml"'
-        ')'
-    ])
-
-    # --------------------------------------------------
     # Gazebo bringup (robot + world)
     # --------------------------------------------------
     gazebo_bringup = IncludeLaunchDescription(
@@ -61,7 +47,6 @@ def generate_launch_description():
             ])
         ),
         launch_arguments={
-            'use_sim_time': use_sim_time,
             'gui': gui,
             'verbose': verbose,
             'rover': rover,
@@ -96,10 +81,24 @@ def generate_launch_description():
             ])
         ),
         launch_arguments={
+            'rover': rover,
             'map': map_file,
-            'params_file': auto_params_file,
+            'params_file': '',
             'use_sim_time': use_sim_time,
         }.items()
+    )
+
+    # Gazebo起動を優先し、RViz/Nav2を後段で起動する。
+    delayed_spawn_wall = TimerAction(
+        period=3.0,
+        actions=[spawn_wall],
+    )
+    delayed_navigation = TimerAction(
+        period=8.0,
+        actions=[
+            LogInfo(msg='[gazebo_nav] Gazebo ready. Start RViz/Nav2'),
+            navigation,
+        ],
     )
 
     # --------------------------------------------------
@@ -141,7 +140,6 @@ def generate_launch_description():
         ),
 
         gazebo_bringup,
-        spawn_wall,
-        navigation,
+        delayed_spawn_wall,
+        delayed_navigation,
     ])
-

@@ -5,7 +5,7 @@
   <version>1.0.0</version>
   <description>Metapackage that contains all essential packages for Megarover Ver.3.0</description>
   <license>Apache License 2.0</license>
-  
+
   <author email="jie@vstone.co.jp">Jie</author>
   <maintainer email="infodesk@vstone.co.jp">Vstone</maintainer>
 
@@ -13,6 +13,8 @@
 
   <exec_depend>megarover3_bringup</exec_depend>
   <exec_depend>megarover_description</exec_depend>
+  <exec_depend>megarover3_navigation</exec_depend>
+  <exec_depend>megarover3_gazebo</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

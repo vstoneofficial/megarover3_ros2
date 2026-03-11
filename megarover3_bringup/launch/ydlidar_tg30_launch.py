@@ -30,7 +30,7 @@ def generate_launch_description():
     params_declare = DeclareLaunchArgument('params_file',
                                            default_value=os.path.join(
                                                megarover3_bringup_share_dir, 'params', 'TG30.yaml'),
-                                           description='FPath to the ROS2 parameters file to use.')
+                                           description='Path to the ROS2 parameters file to use.')
 
     driver_node = LifecycleNode(package='ydlidar_ros2_driver',
                                 executable='ydlidar_ros2_driver_node',
@@ -49,5 +49,5 @@ def generate_launch_description():
     return LaunchDescription([
         params_declare,
         driver_node,
-        # tf2_node,  # not required, since static_transform_publisher is published by description launch file
+        tf2_node,  # not required, since static_transform_publisher is published by description launch file
     ])

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, LogInfo, TimerAction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
@@ -13,8 +13,8 @@ def generate_launch_description():
     # Launch arguments
     # --------------------------------------------------
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    rover        = LaunchConfiguration('rover', default='mega3')
-    wall         = LaunchConfiguration('wall', default='Wall.stl')
+    rover = LaunchConfiguration('rover', default='mega3')
+    wall = LaunchConfiguration('wall', default='Wall.stl')
 
     # --------------------------------------------------
     # Package paths
@@ -44,7 +44,6 @@ def generate_launch_description():
             ])
         ),
         launch_arguments={
-            'use_sim_time': use_sim_time,
             'rover': rover,
         }.items()
     )
@@ -77,8 +76,22 @@ def generate_launch_description():
             ])
         ),
         launch_arguments={
+            'use_sim_time': use_sim_time,
             'rvizconfig': rviz_config,
         }.items()
+    )
+
+    # Gazebo起動を優先し、RViz/SLAMを後段で起動する。
+    delayed_spawn_wall = TimerAction(
+        period=3.0,
+        actions=[spawn_wall],
+    )
+    delayed_slam = TimerAction(
+        period=8.0,
+        actions=[
+            LogInfo(msg='[gazebo_slam] Gazebo ready. Start RViz/SLAM'),
+            slam,
+        ],
     )
 
     # --------------------------------------------------
@@ -96,7 +109,6 @@ def generate_launch_description():
             default_value='mega3',
             description='Rover type (mega3, f120a, s40a_lb)'
         ),
-
         DeclareLaunchArgument(
             'wall',
             default_value='Wall.stl',
@@ -111,7 +123,6 @@ def generate_launch_description():
         ),
 
         gazebo_bringup,
-        spawn_wall,
-        slam,
+        delayed_spawn_wall,
+        delayed_slam,
     ])
-
