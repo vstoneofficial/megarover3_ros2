@@ -14,17 +14,19 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        DeclareLaunchArgument('rover', default_value='mega3'),
+        DeclareLaunchArgument(
+            'rover', default_value='mega3', choices=['mega3', 'f120a', 's40a_lb'],
+        ),
         DeclareLaunchArgument('namespace', default_value=''),
         DeclareLaunchArgument('use_namespace', default_value='false'),
-        DeclareLaunchArgument('slam', default_value='False'),
+        DeclareLaunchArgument('slam', default_value='false'),
         DeclareLaunchArgument('map', default_value=''),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('params_file', default_value=''),
         DeclareLaunchArgument('autostart', default_value='true'),
-        DeclareLaunchArgument('use_composition', default_value='True'),
+        DeclareLaunchArgument('use_composition', default_value='true'),
         DeclareLaunchArgument('container_name', default_value='nav2_container'),
-        DeclareLaunchArgument('use_respawn', default_value='False'),
+        DeclareLaunchArgument('use_respawn', default_value='false'),
         DeclareLaunchArgument('log_level', default_value='info'),
         DeclareLaunchArgument(
             'slam_params_file',

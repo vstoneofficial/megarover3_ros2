@@ -9,22 +9,23 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(tf2 REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(gazebo_msgs REQUIRED)
+find_package(rcl_interfaces REQUIRED)
+find_package(builtin_interfaces REQUIRED)
 
 # pub_odom
 add_executable(pub_odom src/pub_odom.cpp)
+target_compile_features(pub_odom PRIVATE cxx_std_17)
+target_include_directories(pub_odom PRIVATE include)
 ament_target_dependencies(
   pub_odom
+  rcl_interfaces
+  builtin_interfaces
   rclcpp
   geometry_msgs
-  tf2_geometry_msgs
   nav_msgs
   tf2_ros
-  tf2
 )
 
 # rover_gamepad
@@ -45,24 +46,9 @@ ament_target_dependencies(
   sensor_msgs
 )
 
-# gazebo_odom_bridge
-add_executable(gazebo_odom_bridge src/gazebo_odom_bridge.cpp)
-ament_target_dependencies(
-  gazebo_odom_bridge
-  rclcpp
-  geometry_msgs
-  nav_msgs
-  tf2_geometry_msgs
-  tf2_ros
-  tf2
-  gazebo_msgs
-)
+set(bringup_targets pub_odom rover_gamepad rover_gamepad_tty)
 
-install(TARGETS
-  pub_odom
-  rover_gamepad
-  rover_gamepad_tty
-  gazebo_odom_bridge
+install(TARGETS ${bringup_targets}
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -70,12 +56,5 @@ install(
   DIRECTORY launch rviz params
   DESTINATION share/${PROJECT_NAME}
 )
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
 
 ament_package()

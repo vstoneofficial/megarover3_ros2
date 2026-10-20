@@ -1,0 +1,11 @@
+pub_odom:
+  ros__parameters:
+    # Exact stamp matching; seconds. All parameters are read-only after startup.
+    sync_queue_size: 50
+    pair_timeout_sec: 0.1
+    max_sample_age_sec: 0.5
+    future_tolerance_sec: 0.1
+    publish_tf: true
+    # Uncalibrated initial variances in [x, y, z, roll, pitch, yaw] order.
+    pose_covariance_diagonal: [0.01, 0.01, 1000000.0, 1000000.0, 1000000.0, 0.1]
+    twist_covariance_diagonal: [0.01, 1000000.0, 1000000.0, 1000000.0, 1000000.0, 0.1]

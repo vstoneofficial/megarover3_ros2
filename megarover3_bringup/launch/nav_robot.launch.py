@@ -13,8 +13,8 @@ CONFIGURABLE_PARAMETERS = [
     {
         'name': 'rover',
         'default': 'mega3',
-        'description': 'model of rover',
-        'choices': "'mega3', 'f120a', 's40a_lb'",
+        'description': 'Rover model with Jazzy firmware: f120a or mega3',
+        'choices': ['f120a', 'mega3'],
     },
 ]
 
@@ -59,7 +59,8 @@ def launch_setup(context, params, param_name_suffix=''):
                     'robot_description': ParameterValue(
                         Command(['xacro ', robot_description_path]),
                         value_type=str,
-                    )
+                    ),
+                    'publish_frequency': 200.0,
                 }
             ],
         ),
@@ -74,11 +75,13 @@ def launch_setup(context, params, param_name_suffix=''):
             package='joint_state_publisher',
             executable='joint_state_publisher',
             name='joint_state_publisher',
+            parameters=[{'rate': 100}],
         ),
         Node(
             package='megarover3_bringup',
             executable='pub_odom',
             name='pub_odom',
+            parameters=[LaunchConfiguration('odom_params_file')],
         ),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
@@ -88,6 +91,9 @@ def launch_setup(context, params, param_name_suffix=''):
                     'ydlidar_tg30_launch.py',
                 )
             ),
+            launch_arguments={
+                'lidar_port': LaunchConfiguration('lidar_port'),
+            }.items(),
         ),
     ]
 
@@ -96,6 +102,19 @@ def generate_launch_description():
     return LaunchDescription(
         declare_configurable_parameters(CONFIGURABLE_PARAMETERS)
         + [
+            DeclareLaunchArgument(
+                'odom_params_file',
+                default_value=os.path.join(
+                    get_package_share_directory('megarover3_bringup'),
+                    'params', 'firmware_odom.yaml',
+                ),
+                description='Stamped firmware odometry parameters (absolute YAML path).',
+            ),
+            DeclareLaunchArgument(
+                'lidar_port',
+                default_value='',
+                description='Override the TG30 serial port; empty uses TG30.yaml.',
+            ),
             OpaqueFunction(
                 function=launch_setup,
                 kwargs={'params': set_configurable_parameters(CONFIGURABLE_PARAMETERS)},

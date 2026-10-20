@@ -1,142 +1,179 @@
 import os
+from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription, OpaqueFunction, SetEnvironmentVariable, SetLaunchConfiguration
-from launch.conditions import IfCondition
+from launch.actions import (
+    DeclareLaunchArgument, GroupAction, IncludeLaunchDescription, OpaqueFunction,
+    SetEnvironmentVariable, SetLaunchConfiguration,
+)
+from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
-from launch_ros.actions import Node, PushRosNamespace
-from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node, PushRosNamespace, SetRemap
+from launch_ros.descriptions import ParameterFile
+from launch_ros.parameter_descriptions import ParameterValue
+from nav2_common.launch import RewrittenYaml
 
-def _resolve_params_file(context, bringup_dir):
-    params_file = LaunchConfiguration('params_file').perform(context)
+
+ROVER_PARAMS = {
+    'mega3': 'mega3_nav2_params.yaml',
+    'f120a': 'f120a_nav2_params.yaml',
+    's40a_lb': 's40a_lb_nav2_params.yaml',
+}
+
+
+def _checked_file(value, argument):
+    path = Path(os.path.expandvars(os.path.expanduser(value))).resolve()
+    if not path.is_file():
+        raise RuntimeError(f'{argument} file does not exist: {path}')
+    return str(path)
+
+
+def _resolve_inputs(context, share):
     rover = LaunchConfiguration('rover').perform(context)
-    if params_file:
-        selected = params_file
-    elif rover == 'f120a':
-        selected = os.path.join(bringup_dir, 'config', 'f120a_nav2_params.yaml')
-    elif rover == 's40a_lb':
-        selected = os.path.join(bringup_dir, 'config', 's40a_lb_nav2_params.yaml')
+    if rover not in ROVER_PARAMS:
+        raise RuntimeError(f'Unsupported rover: {rover}')
+    params = LaunchConfiguration('params_file').perform(context)
+    params = params or os.path.join(share, 'config', ROVER_PARAMS[rover])
+    namespace = LaunchConfiguration('namespace').perform(context).strip('/')
+    if not IfCondition(LaunchConfiguration('use_namespace')).evaluate(context):
+        namespace = ''
+    selected = {
+        'selected_params_file': _checked_file(params, 'params_file'),
+        'effective_namespace': namespace,
+    }
+    if IfCondition(LaunchConfiguration('slam')).evaluate(context):
+        selected['selected_slam_params_file'] = _checked_file(
+            LaunchConfiguration('slam_params_file').perform(context), 'slam_params_file',
+        )
     else:
-        selected = os.path.join(bringup_dir, 'config', 'mega3_nav2_params.yaml')
-    return [SetLaunchConfiguration('selected_params_file', selected)]
+        map_file = LaunchConfiguration('map').perform(context)
+        selected['selected_map'] = _checked_file(
+            map_file or os.path.join(share, 'maps', 'test.yaml'), 'map',
+        )
+    if IfCondition(LaunchConfiguration('use_rviz')).evaluate(context):
+        selected['selected_rvizconfig'] = _checked_file(
+            LaunchConfiguration('rvizconfig').perform(context), 'rvizconfig',
+        )
+    return [SetLaunchConfiguration(name, value) for name, value in selected.items()]
 
 
 def generate_launch_description():
-    bringup_dir = get_package_share_directory('megarover3_navigation')
-    launch_dir = os.path.join(bringup_dir, 'launch', 'internal')
-
-    namespace = LaunchConfiguration('namespace')
-    use_namespace = LaunchConfiguration('use_namespace')
-    rover = LaunchConfiguration('rover')
-    map_yaml_file = LaunchConfiguration('map')
+    share = get_package_share_directory('megarover3_navigation')
+    internal = os.path.join(share, 'launch', 'internal')
+    namespace = LaunchConfiguration('effective_namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
-    params_file = LaunchConfiguration('params_file')
-    slam = LaunchConfiguration('slam')
-    slam_params_file = LaunchConfiguration('slam_params_file')
     autostart = LaunchConfiguration('autostart')
     use_composition = LaunchConfiguration('use_composition')
     container_name = LaunchConfiguration('container_name')
-    use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
-    use_rviz = LaunchConfiguration('use_rviz')
-    rvizconfig = LaunchConfiguration('rvizconfig')
-
-    selected_params_file = LaunchConfiguration('selected_params_file')
-
-    stdout_linebuf_envvar = SetEnvironmentVariable('RCUTILS_LOGGING_BUFFERED_STREAM', '1')
-
-    bringup_group = GroupAction([
-        PushRosNamespace(
-            condition=IfCondition(use_namespace),
-            namespace=namespace,
+    stack_arguments = {
+        'namespace': namespace,
+        'use_sim_time': use_sim_time,
+        'autostart': autostart,
+        'params_file': LaunchConfiguration('selected_params_file'),
+        'use_composition': use_composition,
+        'use_respawn': LaunchConfiguration('use_respawn'),
+        'container_name': container_name,
+        'log_level': log_level,
+    }
+    container_params = ParameterFile(
+        RewrittenYaml(
+            source_file=LaunchConfiguration('selected_params_file'),
+            root_key=namespace,
+            param_rewrites={'use_sim_time': use_sim_time, 'autostart': autostart},
+            convert_types=True,
         ),
+        allow_substs=True,
+    )
 
+    bringup = GroupAction([
+        PushRosNamespace(namespace),
         Node(
             condition=IfCondition(use_composition),
-            name='nav2_container',
-            package='rclcpp_components',
-            executable='component_container_isolated',
-            parameters=[
-                {'autostart': autostart},
-                {'use_sim_time': use_sim_time},
-            ],
+            name=container_name,
+            package='rclcpp_components', executable='component_container_isolated',
+            parameters=[container_params, {
+                'autostart': ParameterValue(autostart, value_type=bool),
+                'use_sim_time': ParameterValue(use_sim_time, value_type=bool),
+            }],
             arguments=['--ros-args', '--log-level', log_level],
             remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],
             output='screen',
         ),
-
+        GroupAction(
+            condition=IfCondition(LaunchConfiguration('slam')),
+            actions=[
+                SetRemap('/tf', 'tf'), SetRemap('/tf_static', 'tf_static'),
+                IncludeLaunchDescription(
+                    PythonLaunchDescriptionSource(os.path.join(internal, 'slam_async.launch.py')),
+                    launch_arguments={
+                        'use_sim_time': use_sim_time,
+                        'slam_params_file': RewrittenYaml(
+                            source_file=LaunchConfiguration('selected_slam_params_file'),
+                            root_key=namespace,
+                            param_rewrites={'use_sim_time': use_sim_time},
+                            convert_types=True,
+                        ),
+                        'autostart': autostart,
+                        'use_lifecycle_manager': 'false',
+                    }.items(),
+                ),
+            ],
+        ),
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'slam_async.launch.py')),
-            condition=IfCondition(slam),
+            PythonLaunchDescriptionSource(os.path.join(internal, 'localization_stack.launch.py')),
+            condition=UnlessCondition(LaunchConfiguration('slam')),
             launch_arguments={
-                'use_sim_time': use_sim_time,
-                'slam_params_file': slam_params_file,
+                **stack_arguments, 'map': LaunchConfiguration('selected_map'),
             }.items(),
         ),
-
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'localization_stack.launch.py')),
-            condition=IfCondition(PythonExpression(['not ', slam])),
-            launch_arguments={
-                'namespace': namespace,
-                'map': map_yaml_file,
-                'use_sim_time': use_sim_time,
-                'autostart': autostart,
-                'params_file': selected_params_file,
-                'use_composition': use_composition,
-                'use_respawn': use_respawn,
-                'container_name': container_name,
-                'log_level': log_level,
-            }.items(),
+            PythonLaunchDescriptionSource(os.path.join(internal, 'nav2_stack.launch.py')),
+            launch_arguments=stack_arguments.items(),
         ),
-
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'nav2_stack.launch.py')),
-            launch_arguments={
-                'namespace': namespace,
-                'use_sim_time': use_sim_time,
-                'autostart': autostart,
-                'params_file': selected_params_file,
-                'use_composition': use_composition,
-                'use_respawn': use_respawn,
-                'container_name': container_name,
-                'log_level': log_level,
-            }.items(),
+        Node(
+            condition=IfCondition(LaunchConfiguration('use_rviz')),
+            package='rviz2', executable='rviz2', name='rviz2', output='screen',
+            arguments=['-d', LaunchConfiguration('selected_rvizconfig')],
+            parameters=[{'use_sim_time': ParameterValue(use_sim_time, value_type=bool)}],
         ),
     ])
 
-    rviz_node = Node(
-        condition=IfCondition(use_rviz),
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        arguments=['-d', rvizconfig],
-        parameters=[{'use_sim_time': use_sim_time}],
-        output='screen',
-    )
-
     return LaunchDescription([
-        DeclareLaunchArgument('rover', default_value='mega3', description='Rover type: mega3 or f120a or s40a_lb'),
+        DeclareLaunchArgument(
+            'rover', default_value='mega3', choices=list(ROVER_PARAMS),
+            description='Rover configuration: mega3 or f120a (legacy s40a_lb retained).',
+        ),
         DeclareLaunchArgument('namespace', default_value='', description='Top-level namespace'),
-        DeclareLaunchArgument('use_namespace', default_value='false', description='Whether to apply namespace'),
+        DeclareLaunchArgument(
+            'use_namespace', default_value='false', description='Whether to apply namespace',
+        ),
         DeclareLaunchArgument('slam', default_value='false', description='Whether to run SLAM'),
-        DeclareLaunchArgument('map', default_value=os.path.join(bringup_dir, 'maps', 'test.yaml'), description='Full path to map yaml file'),
-        DeclareLaunchArgument('use_sim_time', default_value='false', description='Use simulation (Gazebo) clock if true'),
-        DeclareLaunchArgument('params_file', default_value='', description='Optional full path to nav2 params file. Empty = auto by rover'),
-        DeclareLaunchArgument('slam_params_file', default_value=os.path.join(bringup_dir, 'config', 'mapper_params_online_async.yaml'), description='Full path to slam toolbox params file'),
-        DeclareLaunchArgument('autostart', default_value='true', description='Automatically startup the nav2 stack'),
-        DeclareLaunchArgument('use_composition', default_value='True', description='Whether to use composed bringup'),
-        DeclareLaunchArgument('container_name', default_value='nav2_container', description='Container name when composition is enabled'),
-        DeclareLaunchArgument('use_respawn', default_value='False', description='Whether to respawn if a node crashes when composition is disabled'),
-        DeclareLaunchArgument('log_level', default_value='info', description='log level'),
-        DeclareLaunchArgument('use_rviz', default_value='true', description='Launch RViz2'),
-        DeclareLaunchArgument('rvizconfig', default_value=PathJoinSubstitution([FindPackageShare('megarover3_navigation'), 'rviz', 'nav2.rviz']), description='Absolute path to rviz config file'),
-        SetLaunchConfiguration('selected_params_file', ''),
-        OpaqueFunction(function=lambda context: _resolve_params_file(context, bringup_dir)),
-
-        stdout_linebuf_envvar,
-        bringup_group,
-        rviz_node,
+        DeclareLaunchArgument(
+            'map', default_value=os.path.join(share, 'maps', 'test.yaml'),
+            description='Map YAML path; empty uses the bundled test map.',
+        ),
+        DeclareLaunchArgument('use_sim_time', default_value='false'),
+        DeclareLaunchArgument(
+            'params_file', default_value='',
+            description='Optional Nav2 YAML path; empty selects by rover.',
+        ),
+        DeclareLaunchArgument(
+            'slam_params_file',
+            default_value=os.path.join(share, 'config', 'mapper_params_online_async.yaml'),
+        ),
+        DeclareLaunchArgument('autostart', default_value='true'),
+        DeclareLaunchArgument('use_composition', default_value='true'),
+        DeclareLaunchArgument('container_name', default_value='nav2_container'),
+        DeclareLaunchArgument('use_respawn', default_value='false'),
+        DeclareLaunchArgument('log_level', default_value='info'),
+        DeclareLaunchArgument('use_rviz', default_value='true'),
+        DeclareLaunchArgument(
+            'rvizconfig', default_value=os.path.join(share, 'rviz', 'nav2.rviz'),
+        ),
+        SetEnvironmentVariable('RCUTILS_LOGGING_BUFFERED_STREAM', '1'),
+        OpaqueFunction(function=lambda context: _resolve_inputs(context, share)),
+        bringup,
     ])
