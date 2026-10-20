@@ -58,7 +58,8 @@ def launch_setup(context, params, param_name_suffix=''):
                     'robot_description': ParameterValue(
                         Command(['xacro ', robot_description_path]),
                         value_type=str,
-                    )
+                    ),
+                    'publish_frequency': 200.0,
                 }
             ],
         ),
@@ -73,6 +74,7 @@ def launch_setup(context, params, param_name_suffix=''):
             package='joint_state_publisher',
             executable='joint_state_publisher',
             name='joint_state_publisher',
+            parameters=[{'rate': 100}],
         ),
         Node(
             package='megarover3_bringup',

@@ -7,97 +7,70 @@ from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     ExecuteProcess,
+    GroupAction,
+    IncludeLaunchDescription,
     LogInfo,
     OpaqueFunction,
     RegisterEventHandler,
     SetLaunchConfiguration,
 )
+from launch.actions.reset_launch_configurations import ResetLaunchConfigurations
 from launch.event_handlers import OnShutdown
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
 
 def _check_no_running_gazebo(context, *args, **kwargs):
-    cleanup_stale = LaunchConfiguration("cleanup_stale_gazebo").perform(context)
-    cleanup_stale = cleanup_stale.lower() in ("1", "true", "yes", "on")
-
-    if cleanup_stale:
-        stale_patterns = [
-            "megarover3_robot_state_publisher",
-            "rover_twist_relay.py",
-            "gazebo_odom_bridge",
-            "async_slam_toolbox_node",
-            "rviz2 .*megarover3_navigation",
-            "spawn_entity.py .*spawn_wall_",
-            "controller_manager spawner",
-        ]
-        for pattern in stale_patterns:
-            subprocess.run(
-                ["pkill", "-TERM", "-f", pattern],
+    # Inspect conflicts without signalling any process, including stale ones.
+    try:
+        running = []
+        for name in ("gzserver", "gzclient"):
+            result = subprocess.run(
+                ["pgrep", "-x", name],
                 stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=5,
             )
-        subprocess.run(
-            ["pkill", "-TERM", "-f", "gzserver .*/tmp/megarover3_world_.*\\.world"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            if result.returncode not in (0, 1):
+                raise RuntimeError(f"[gazebo_bringup] Could not inspect {name}.")
+            running.append(result.returncode == 0)
+        listeners = subprocess.run(
+            ["ss", "-H", "-lnt", "sport = :11345"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True,
+            timeout=5,
         )
-        subprocess.run(
-            ["pkill", "-TERM", "-f", "gzclient"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        subprocess.run(["sleep", "1"], stdout=subprocess.DEVNULL)
-        for pattern in stale_patterns:
-            subprocess.run(
-                ["pkill", "-KILL", "-f", pattern],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-        subprocess.run(
-            ["pkill", "-KILL", "-f", "gzserver .*/tmp/megarover3_world_.*\\.world"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        for _ in range(10):
-            has_stale_gzserver = subprocess.run(
-                ["pgrep", "-f", "gzserver .*/tmp/megarover3_world_.*\\.world"],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            ).returncode == 0
-            port_in_use = subprocess.run(
-                ["bash", "-lc", "ss -lnt | grep -q ':11345'"],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            ).returncode == 0
-            if not has_stale_gzserver and not port_in_use:
-                break
-            subprocess.run(["sleep", "0.5"], stdout=subprocess.DEVNULL)
-
-    has_gzserver = subprocess.run(
-        ["pgrep", "gzserver"], stdout=subprocess.DEVNULL
-    ).returncode == 0
-    has_gzclient = subprocess.run(
-        ["pgrep", "gzclient"], stdout=subprocess.DEVNULL
-    ).returncode == 0
-    port_in_use = subprocess.run(
-        ["bash", "-lc", "ss -lnt | grep -q ':11345'"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    ).returncode == 0
+    except (OSError, subprocess.SubprocessError) as error:
+        raise RuntimeError(
+            "[gazebo_bringup] Could not check for an existing Gazebo; "
+            "no processes were stopped."
+        ) from error
 
     # 既存Gazeboやマスター用ポート占有がある場合は即中断する。
-    if has_gzserver or has_gzclient or port_in_use:
+    if any(running) or listeners.stdout.strip():
         raise RuntimeError(
             "[gazebo_bringup] 既存Gazeboまたは11345ポート占有を検出。"
-            "重複起動を解消してから再実行してください。"
+            "起動元の端末で終了してから再実行してください。"
+            "このlaunchから既存プロセスを終了することはありません。"
         )
 
-    return [LogInfo(msg="[gazebo_bringup] No existing Gazebo process detected.")]
+    messages = []
+    if LaunchConfiguration("cleanup_stale_gazebo").perform(context).lower() in (
+        "1", "true", "yes", "on"
+    ):
+        messages.append(LogInfo(
+            msg="[gazebo_bringup] cleanup_stale_gazebo is ignored; "
+                "existing processes are never terminated."
+        ))
+    return messages + [LogInfo(msg="[gazebo_bringup] No existing Gazebo process detected.")]
 
 
-def _make_world_with_state(context, *args, **kwargs):
+def _make_world_with_state(context, temporary_files, *args, **kwargs):
     physics_type = LaunchConfiguration("physics").perform(context)
     if physics_type not in ("ode", "bullet"):
         physics_type = "ode"
@@ -143,7 +116,8 @@ def _make_world_with_state(context, *args, **kwargs):
 """
 
     fd, path = tempfile.mkstemp(prefix="megarover3_world_", suffix=".world")
-    with os.fdopen(fd, "w") as f:
+    temporary_files.append(path)
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
         f.write(world_xml)
 
     return [
@@ -152,7 +126,7 @@ def _make_world_with_state(context, *args, **kwargs):
     ]
 
 
-def _create_urdf_and_rsp(context, *args, **kwargs):
+def _create_urdf_and_rsp(context, temporary_files, *args, **kwargs):
     rover = LaunchConfiguration("rover").perform(context)
 
     urdf_dir = os.path.join(
@@ -170,13 +144,14 @@ def _create_urdf_and_rsp(context, *args, **kwargs):
 
     xacro_file = os.path.join(urdf_dir, xacro_map[rover])
 
+    # Generate once before starting consumers; no writer can outlive cleanup.
+    robot_description = Command(
+        [FindExecutable(name="xacro"), " ", xacro_file]
+    ).perform(context)
     fd, urdf_path = tempfile.mkstemp(prefix="robot_", suffix=".urdf")
-    os.close(fd)
-
-    gen = ExecuteProcess(
-        cmd=[FindExecutable(name="xacro"), xacro_file, "-o", urdf_path],
-        output="screen",
-    )
+    temporary_files.append(urdf_path)
+    with os.fdopen(fd, "w", encoding="utf-8") as stream:
+        stream.write(robot_description)
 
     # gazebo_ros2_control からも安定して参照できるように robot_description を明示。
     rsp = Node(
@@ -187,7 +162,7 @@ def _create_urdf_and_rsp(context, *args, **kwargs):
         parameters=[
             {
                 "robot_description": ParameterValue(
-                    Command([FindExecutable(name="xacro"), " ", xacro_file]),
+                    robot_description,
                     value_type=str,
                 ),
                 "use_sim_time": True,
@@ -198,7 +173,6 @@ def _create_urdf_and_rsp(context, *args, **kwargs):
     return [
         SetLaunchConfiguration("urdf_path", urdf_path),
         LogInfo(msg=f"[gazebo_bringup] generated temp urdf: {urdf_path}"),
-        gen,
         rsp,
     ]
 
@@ -223,39 +197,26 @@ def _resolve_spawn_z(context, *args, **kwargs):
     ]
 
 
-def _cleanup_temp_files(context, *args, **kwargs):
-    world_path = LaunchConfiguration("world_path").perform(context)
-    urdf_path = LaunchConfiguration("urdf_path").perform(context)
-
-    if world_path:
-        subprocess.run(
-            ["pkill", "-TERM", "-f", f"gzserver .*{world_path}"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        subprocess.run(
-            ["pkill", "-TERM", "-f", "gzclient"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        subprocess.run(["sleep", "1"], stdout=subprocess.DEVNULL)
-        subprocess.run(
-            ["pkill", "-KILL", "-f", f"gzserver .*{world_path}"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-
-    for p in (world_path, urdf_path):
+def _cleanup_temp_files(context, temporary_files, *args, **kwargs):
+    # Paths belong to this launch instance, never to caller-supplied arguments.
+    pending = []
+    messages = []
+    for path in temporary_files:
         try:
-            if p and os.path.exists(p):
-                os.remove(p)
-        except Exception:
+            os.remove(path)
+        except FileNotFoundError:
             pass
-
-    return [LogInfo(msg="[gazebo_bringup] Cleaned up temp files")]
+        except OSError as error:
+            pending.append(path)
+            messages.append(LogInfo(
+                msg=f"[gazebo_bringup] Could not remove temporary file {path}: {error}"
+            ))
+    temporary_files[:] = pending
+    return messages + [LogInfo(msg="[gazebo_bringup] Temporary-file cleanup completed.")]
 
 
 def generate_launch_description():
+    temporary_files = []
     rover = LaunchConfiguration("rover")
     gui = LaunchConfiguration("gui")
     verbose = LaunchConfiguration("verbose")
@@ -264,29 +225,30 @@ def generate_launch_description():
     spawn_z = LaunchConfiguration("spawn_z")
 
     check_no_running_gazebo = OpaqueFunction(function=_check_no_running_gazebo)
-    make_world = OpaqueFunction(function=_make_world_with_state)
-    create_urdf_and_rsp = OpaqueFunction(function=_create_urdf_and_rsp)
+    make_world = OpaqueFunction(
+        function=_make_world_with_state, kwargs={"temporary_files": temporary_files}
+    )
+    create_urdf_and_rsp = OpaqueFunction(
+        function=_create_urdf_and_rsp, kwargs={"temporary_files": temporary_files}
+    )
     resolve_spawn_z = OpaqueFunction(function=_resolve_spawn_z)
 
-    gazebo = ExecuteProcess(
-        cmd=[
-            "ros2",
-            "launch",
-            "gazebo_ros",
-            "gazebo.launch.py",
-            ["gui:=", gui],
-            ["verbose:=", verbose],
-            ["world:=", world_path],
+    # Include server/client actions so this launch owns their shutdown.
+    # Isolate Gazebo arguments while preserving the caller's environment.
+    gazebo = GroupAction(
+        scoped=True,
+        actions=[
+            ResetLaunchConfigurations({"gui": gui, "verbose": verbose, "world": world_path}),
+            IncludeLaunchDescription(PythonLaunchDescriptionSource(os.path.join(
+                get_package_share_directory("gazebo_ros"), "launch", "gazebo.launch.py"
+            ))),
         ],
-        output="screen",
     )
 
-    spawn = ExecuteProcess(
-        cmd=[
-            "ros2",
-            "run",
-            "gazebo_ros",
-            "spawn_entity.py",
+    spawn = Node(
+        package="gazebo_ros",
+        executable="spawn_entity.py",
+        arguments=[
             "-entity",
             rover,
             "-file",
@@ -356,20 +318,26 @@ def generate_launch_description():
     )
 
     on_shutdown_cleanup = RegisterEventHandler(
-        OnShutdown(on_shutdown=[OpaqueFunction(function=_cleanup_temp_files)])
+        OnShutdown(on_shutdown=[OpaqueFunction(
+            function=_cleanup_temp_files, kwargs={"temporary_files": temporary_files}
+        )])
     )
 
     return LaunchDescription([
         DeclareLaunchArgument("gui", default_value="true"),
         DeclareLaunchArgument("verbose", default_value="false"),
         DeclareLaunchArgument("rover", default_value="mega3"),
-        DeclareLaunchArgument("cleanup_stale_gazebo", default_value="true"),
+        DeclareLaunchArgument(
+            "cleanup_stale_gazebo", default_value="false",
+            description="Deprecated compatibility argument; never stops existing processes.",
+        ),
         DeclareLaunchArgument("physics", default_value="ode"),
         DeclareLaunchArgument("spawn_z", default_value=""),
         DeclareLaunchArgument("max_step_size", default_value="0.002"),
         DeclareLaunchArgument("real_time_update_rate", default_value="500"),
         DeclareLaunchArgument("state_update_rate", default_value="15"),
 
+        on_shutdown_cleanup,
         check_no_running_gazebo,
         make_world,
         create_urdf_and_rsp,
@@ -379,5 +347,4 @@ def generate_launch_description():
         spawners_group,
         rover_twist_relay,
         gazebo_odom_bridge,
-        on_shutdown_cleanup,
     ])

@@ -27,7 +27,7 @@ def generate_launch_description():
                 PathJoinSubstitution([
                     FindPackageShare('megarover3_navigation'),
                     'launch',
-                    'internal/slam_sync.launch.py'
+                    'internal/slam_sync_internal.launch.py'
                 ])
             ]),
             launch_arguments={

@@ -2,6 +2,12 @@
 Changelog for package megarover3_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Leave existing Gazebo and SLAM processes untouched; refuse conflicting startup.
+* Manage Gazebo server and client in the current launch and remove only its
+  generated temporary files during shutdown.
+
 1.1.0 (2025-09-24)
 ------------------
 * Initial commit
